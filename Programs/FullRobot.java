@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
 //import selenium
 @TeleOp
 public class FullRobot extends OpMode {
@@ -22,7 +23,7 @@ public class FullRobot extends OpMode {
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
-    DcMotor  leftFront;
+    DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
@@ -36,7 +37,7 @@ public class FullRobot extends OpMode {
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
-    
+
     // P Value for strafing
     double straafeP = .05;
 
@@ -84,15 +85,11 @@ public class FullRobot extends OpMode {
     // Prepare a timer
     ElapsedTime timer;
 
-    // Declare the imu 
+    // Declare the imu
     BNO055IMU imu;
 
     // Prepare to use the gyro
     Orientation angles;
-    
-  
-
-
 
     @Override
     public void init() {
@@ -107,13 +104,13 @@ public class FullRobot extends OpMode {
 
         // Map all servos
         ShooterServo = hardwareMap.get(Servo.class, "s1");
-        GripperServo = hardwareMap.get(Servo.class,"GS");
-        LeftServo = hardwareMap.get(CRServo.class,"LS");
-        RightServo = hardwareMap.get(CRServo.class,"RS");
-        IntakeServo = hardwareMap.get(CRServo.class,"IS");
-        IntakeServo2 = hardwareMap.get(CRServo.class,"IS2");
-        SideServo = hardwareMap.get(Servo.class,"SS");
-        SideServo2 = hardwareMap.get(Servo.class,"SS2");
+        GripperServo = hardwareMap.get(Servo.class, "GS");
+        LeftServo = hardwareMap.get(CRServo.class, "LS");
+        RightServo = hardwareMap.get(CRServo.class, "RS");
+        IntakeServo = hardwareMap.get(CRServo.class, "IS");
+        IntakeServo2 = hardwareMap.get(CRServo.class, "IS2");
+        SideServo = hardwareMap.get(Servo.class, "SS");
+        SideServo2 = hardwareMap.get(Servo.class, "SS2");
 
         // Set modes of motors
         ShooterMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,11 +122,11 @@ public class FullRobot extends OpMode {
 
         // Initialize the gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
@@ -146,32 +143,32 @@ public class FullRobot extends OpMode {
         intakereverse = false;
 
         // Setup the shooter motor
-        PIDFCoefficients newPIDF = new PIDFCoefficients(1000,10,0,14.3);
+        PIDFCoefficients newPIDF = new PIDFCoefficients(1000, 10, 0, 14.3);
         ShooterMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, newPIDF);
         pid = ShooterMotor1.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         // Create the timer
         timer = new ElapsedTime();
-        
+
     }
-       
+
     @Override
     public void loop() {
         // Print shooter motor data
         telemetry.addData("isPIDMode?", ShooterMotor1.getMode().isPIDMode());
-        telemetry.addData("p", pid.p );
-        telemetry.addData("i", pid.i );
-        telemetry.addData("d", pid.d );
-        telemetry.addData("f", pid.f );
+        telemetry.addData("p", pid.p);
+        telemetry.addData("i", pid.i);
+        telemetry.addData("d", pid.d);
+        telemetry.addData("f", pid.f);
         telemetry.addData("Motor Power", ShooterMotor1.getPower());
-        telemetry.update(); 
+        telemetry.update();
 
         // Brings robot to starting orientation
         if (gamepad1.dpad_up) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             String angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
             double angle = Float.parseFloat(angleVal);
-            if (angle > 5){
+            if (angle > 5) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -179,40 +176,36 @@ public class FullRobot extends OpMode {
                 leftFront.setPower(.4);
                 rightBack.setPower(.4);
                 rightFront.setPower(.4);
-            }
-            else if (angle < -5) {
+            } else if (angle < -5) {
                 leftBack.setPower(-.4);
                 leftFront.setPower(-.4);
                 rightBack.setPower(-.4);
                 rightFront.setPower(-.4);
 
-            }
-            else {
+            } else {
                 leftBack.setPower(0);
                 leftFront.setPower(0);
                 rightBack.setPower(0);
                 rightFront.setPower(0);
             }
-        // Strafes robot along starting orientation     
+            // Strafes robot along starting orientation
         } else if (gamepad1.right_trigger > .5 || gamepad1.left_trigger > .5) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             String angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
             double angle = Float.parseFloat(angleVal);
-    
-        
-            if (gamepad1.right_trigger > .5){
-                
+
+            if (gamepad1.right_trigger > .5) {
+
                 leftstickx = -1;
                 leftsticky = 0;
-                rightstickx = -straafeP*angle;
-                
-            }
-            else if (gamepad1.left_trigger > .5){
+                rightstickx = -straafeP * angle;
+
+            } else if (gamepad1.left_trigger > .5) {
                 leftstickx = 1;
                 leftsticky = 0;
-                rightstickx = -straafeP*angle;
+                rightstickx = -straafeP * angle;
             }
-            // Uses values to determine motor powers 
+            // Uses values to determine motor powers
             r = Math.hypot(leftstickx, leftsticky);
             robotangle = Math.atan2(leftsticky, leftstickx) - Math.PI / 4;
             rightX = rightstickx;
@@ -245,7 +238,7 @@ public class FullRobot extends OpMode {
                 rightFrontpower = rightFrontpower / divide;
                 rightBackpower = rightBackpower / divide;
             }
-            
+
             // Applies motor powers
             leftFront.setPower(-leftFrontpower);
             rightFront.setPower(rightFrontpower);
@@ -253,12 +246,12 @@ public class FullRobot extends OpMode {
             rightBack.setPower(rightBackpower);
 
         } else {
-            // Robot control if not strafing 
+            // Robot control if not strafing
             leftstickx = -gamepad1.left_stick_x;
             leftsticky = gamepad1.left_stick_y;
             rightstickx = -gamepad1.right_stick_x;
 
-            // Uses values to determine motor powers 
+            // Uses values to determine motor powers
             r = Math.hypot(leftstickx, leftsticky);
             robotangle = Math.atan2(leftsticky, leftstickx) - Math.PI / 4;
             rightX = rightstickx;
@@ -291,7 +284,7 @@ public class FullRobot extends OpMode {
                 rightFrontpower = rightFrontpower / divide;
                 rightBackpower = rightBackpower / divide;
             }
-            
+
             // Applies motor powers
             leftFront.setPower(-leftFrontpower);
             rightFront.setPower(rightFrontpower);
@@ -309,7 +302,7 @@ public class FullRobot extends OpMode {
         // Toggles shooter motor to high goal setting
         if (gamepad2.x) {
             shooterlow = false;
-            if(isPressed == false) {
+            if (isPressed == false) {
                 isPressed = true;
                 if (shooteron == false) {
                     shooteron = true;
@@ -319,10 +312,10 @@ public class FullRobot extends OpMode {
                     shooteron = false;
                 }
             }
-        // Toggles shooter motor to power shot / mid goal setting
+            // Toggles shooter motor to power shot / mid goal setting
         } else if (gamepad2.dpad_down) {
             shooteron = false;
-            if(isPressed55 == false) {
+            if (isPressed55 == false) {
                 isPressed55 = true;
                 if (shooterlow == false) {
                     shooterlow = true;
@@ -332,27 +325,26 @@ public class FullRobot extends OpMode {
                     shooterlow = false;
                 }
             }
-        }
-        else {
+        } else {
             isPressed = false;
             isPressed55 = false;
         }
 
         // Record motor speed to log for later analysis
-        if(shooteron) {
-            if(timer.time()>0.1){
+        if (shooteron) {
+            if (timer.time() > 0.1) {
                 currentCounts = ShooterMotor1.getCurrentPosition();
-                System.out.println((currentCounts-lastCounts)/timer.time());
+                System.out.println((currentCounts - lastCounts) / timer.time());
                 lastCounts = currentCounts;
                 timer.reset();
-            
-            }
-            
-        } 
 
-        // Toggles intake 
+            }
+
+        }
+
+        // Toggles intake
         if (gamepad1.a) {
-            if(isPressed2 == false) {
+            if (isPressed2 == false) {
                 isPressed2 = true;
                 if (intakeon == false) {
                     intakeon = true;
@@ -360,7 +352,6 @@ public class FullRobot extends OpMode {
                     IntakeMotor2.setPower(1);
                     IntakeServo.setPower(1);
                     IntakeServo2.setPower(-1);
-                    
 
                 } else {
                     IntakeMotor.setPower(0);
@@ -370,10 +361,10 @@ public class FullRobot extends OpMode {
                     intakeon = false;
                 }
             }
-        
-        // Toggles intake (reversed)
+
+            // Toggles intake (reversed)
         } else if (gamepad2.y) {
-            if(isPressed4 == false) {
+            if (isPressed4 == false) {
                 isPressed4 = true;
                 if (intakereverse == false) {
                     intakereverse = true;
@@ -389,24 +380,24 @@ public class FullRobot extends OpMode {
                     intakereverse = false;
                 }
             }
-            
+
         } else {
             isPressed2 = false;
             isPressed4 = false;
         }
-        
+
         // Shoots rings
         if (gamepad2.a) {
             ShooterServo.setPosition(.5);
         } else {
             ShooterServo.setPosition(1);
         }
-        
+
         // Bring wobble goal arm up
-        if(gamepad2.left_bumper) {
+        if (gamepad2.left_bumper) {
             LeftServo.setPower(-1);
             RightServo.setPower(-1);
-        // Bring wobble goal arm down
+            // Bring wobble goal arm down
         } else if (gamepad2.right_bumper) {
             LeftServo.setPower(1);
             RightServo.setPower(1);
@@ -414,15 +405,15 @@ public class FullRobot extends OpMode {
             LeftServo.setPower(0);
             RightServo.setPower(0);
         }
-        
+
         // Toggles gripper position
         if (gamepad2.b) {
-            if(isPressed3 == false) {
+            if (isPressed3 == false) {
                 isPressed3 = true;
                 if (Gripperon == false) {
                     Gripperon = true;
                     GripperServo.setPosition(1);
-                 
+
                 } else {
                     GripperServo.setPosition(0.45);
                     Gripperon = false;
@@ -431,33 +422,70 @@ public class FullRobot extends OpMode {
         } else {
             isPressed3 = false;
         }
-        
+
         // Release for autonomous wobble goal latches
-        if(gamepad2.dpad_right){
+        if (gamepad2.dpad_right) {
             SideServo.setPosition(1);
         } else {
             SideServo.setPosition(0);
         }
-        
-        if(gamepad2.dpad_left){
+
+        if (gamepad2.dpad_left) {
             SideServo2.setPosition(1);
         } else {
             SideServo2.setPosition(0);
         }
-       
-        
-        
-  
+
+        if (gamepad2.dpad_up) {
+            shootThreeTimes(0.15);
+        }
 
     }
-    
+
+    void shootThreeTimes(final double waitTime) {
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+        timer.reset();
+        timer.startTime();
+        ShooterServo.setPosition(1.0);
+        while (timer.time() < waitTime) {
+        }
+        ShooterServo.setPosition(0.5);
+        timer.reset();
+        timer.startTime();
+        while (timer.time() < 0.2) {
+        }
+        ShooterServo.setPosition(1.0);
+        timer.reset();
+        timer.startTime();
+        while (timer.time() < waitTime) {
+        }
+        ShooterServo.setPosition(0.5);
+        timer.reset();
+        timer.startTime();
+        while (timer.time() < 0.2) {
+        }
+        ShooterServo.setPosition(1.0);
+        timer.reset();
+        timer.startTime();
+        while (timer.time() < waitTime) {
+        }
+        ShooterServo.setPosition(0.5);
+        timer.reset();
+        timer.startTime();
+        while (timer.time() < 0.2) {
+        }
+        ShooterServo.setPosition(1.0);
+    }
+
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
-    String formatDegrees(double degrees){
+    String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
-    
-}
 
+}
