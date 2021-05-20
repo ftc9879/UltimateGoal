@@ -232,6 +232,7 @@ public class TwoRobotAutoBlue extends LinearOpMode {
             strafe('l', 900, 0.5, 0.0);
             strafe('r', 200, 0.5, 0.0);
             SideServo.setPosition(1.0);
+            strafe('r', 900, 0.5, 0.0);
         }
         if (parkFirst == true) {
             if (guess == 2) {

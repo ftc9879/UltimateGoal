@@ -231,6 +231,7 @@ public class TwoRobotAuto extends LinearOpMode {
             strafe('r', 750, 0.5, 0.0);
             strafe('l', 200, 0.5, 0.0);
             SideServo2.setPosition(0.0);
+            strafe('l', 550, 0.5, 0.0);
             waiting(.5);
         }
         if (parkFirst == true) {
