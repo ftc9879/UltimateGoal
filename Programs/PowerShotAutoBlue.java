@@ -25,8 +25,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
 
-public class PowerShotAutoBlue extends LinearOpMode
-{
+public class PowerShotAutoBlue extends LinearOpMode {
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
@@ -75,6 +74,7 @@ public class PowerShotAutoBlue extends LinearOpMode
     private static final String VUFORIA_KEY = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+
     public PowerShotAutoBlue() {
         straightP = 0.075;
         visionReadTime = 0.1;
@@ -83,12 +83,11 @@ public class PowerShotAutoBlue extends LinearOpMode
         timer = new ElapsedTime();
         far = 0.0;
     }
-    
-    boolean startLeft = true; 
+
+    boolean startLeft = true;
     boolean shootStack = true;
     boolean parkFirst = false;
     double startWait = 0;
-
 
     public void runOpMode() throws InterruptedException {
         ShooterMotor1 = hardwareMap.get(DcMotorEx.class, "SM1");
@@ -125,14 +124,14 @@ public class PowerShotAutoBlue extends LinearOpMode
         parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        
+
         telemetry.update();
         timer = new ElapsedTime();
         initializeVision();
         telemetry.addData("ROBOT IS READY", "PRESS START TO BEGIN");
         telemetry.update();
         waitForStart();
-       determineNumberOfRings();
+        determineNumberOfRings();
         if (tfod != null) {
             tfod.shutdown();
         }
@@ -140,119 +139,119 @@ public class PowerShotAutoBlue extends LinearOpMode
         SideServo.setPosition(0.0);
         moveStraight('f', 2800, 0.0, 0.8);
         shootOneTime(0.5);
-        strafe('r',200,.5,0);
+        strafe('r', 200, .5, 0);
         shootOneTime(0.5);
-        strafe('r',200,.5,0);
+        strafe('r', 200, .5, 0);
         shootOneTime(0.5);
-        
-        if(shootStack == true & guess > 0){
-        strafe('l',750,0.5,0);
-        moveStraight('b', -1550, 0.0, 0.8);
+
+        if (shootStack == true & guess > 0) {
+            strafe('l', 750, 0.5, 0);
+            moveStraight('b', -1550, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
             IntakeMotor2.setPower(1.0);
-        if (guess == 1){
-            waiting(5); // normal: 0 8373: 0 92: 5 17040: 5
-            strafe('l',650,0.5,0);
+            if (guess == 1) {
+                waiting(5); // normal: 0 8373: 0 92: 5 17040: 5
+                strafe('l', 650, 0.5, 0);
+            } else {
+                strafe('l', 500, 0.5, 0);
+            }
+            ShooterMotor1.setPower(-0.61);
+            if (guess == 2) {
+                moveStraight('f', 400, 0.0, 0.3);
+                waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
+                shootThreeTimes(0.25);
+                moveStraight('f', 1300, 0.0, 0.4);
+                waiting(1);
+                shootThreeTimes(0.25);
+            }
+            if (guess == 1) {
+                waiting(2.5); // normal: 0 8373: 5 92: 0 17040: 2.5
+                moveStraight('f', 400, 0.0, 0.3);
+                waiting(1.5);
+                moveStraight('f', 1300, 0.0, 0.4);
+                shootThreeTimes(.25);
+
+            }
+
         } else {
-            strafe('l',500,0.5,0);   
+            strafe('l', 250, 0.5, 0);
+            moveStraight('b', -1000, 0, 0.5);
+            waiting(9.5); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
+            strafe('l', 1250, 0.5, 0);
+            ShooterMotor1.setPower(-0.61);
+            IntakeServo.setPower(1.0);
+            IntakeServo2.setPower(-1.0);
+            IntakeMotor.setPower(-1.0);
+            IntakeMotor2.setPower(1.0);
         }
-        ShooterMotor1.setPower(-0.61);
-        if (guess == 2){
-            moveStraight('f', 400, 0.0, 0.3);
-            waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
+        if (guess == 2) {
+            moveStraight('f', 2750, 0.0, 0.9);
+
+            strafe('l', 750, 0.5, 0.0);
+
+            SideServo.setPosition(1.0);
+            waiting(.5);
+            strafe('r', 600, 0.8, 0);
+
+            moveStraight('b', -2800, -2.0, 0.95);
+
             shootThreeTimes(0.25);
-            moveStraight('f', 1300, 0.0, 0.4);
-            waiting(1);
-            shootThreeTimes(0.25);
+            moveStraight('f', 500, 0.0, 0.95);
         }
         if (guess == 1) {
-        waiting(2.5); // normal: 0 8373: 5 92: 0 17040: 2.5
-        moveStraight('f', 400, 0.0, 0.3);
-        waiting(1.5);
-        moveStraight('f', 1300, 0.0, 0.4);
-        shootThreeTimes(.25);
-
-        }
-        
-        }
-        else {
-        strafe('l',250,0.5,0);
-        moveStraight('b',-1000,0,0.5);
-        waiting(9.5); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5 
-        strafe('l',1250,0.5,0);
-        ShooterMotor1.setPower(-0.61);
-         IntakeServo.setPower(1.0);
-        IntakeServo2.setPower(-1.0);
-        IntakeMotor.setPower(-1.0);
-        IntakeMotor2.setPower(1.0);
-        }
-         if (guess == 2){
-            moveStraight('f', 2750, 0.0, 0.9);
-           
-            strafe('l', 750, 0.5, 0.0);
-            
+            pointTurn('r', -85, .4);
+            strafe('l', 1300, .5, -90);
+            strafe('r', 200, 0.5, -90);
             SideServo.setPosition(1.0);
-            waiting(.5);
-            strafe('r',600,0.8,0);
-
-            moveStraight('b',-2800,-2.0,0.95);
-            
-            shootThreeTimes(0.25);  
-            moveStraight('f',500,0.0,0.95);
-         } 
-         if (guess == 1) {
-            pointTurn('r',-85,.4);
-            strafe('l',1300,.5,-90);
-            strafe('r',200,0.5,-90);
-            SideServo.setPosition(1.0);
-            strafe('r',700,0.5,-90);
-            pointTurn('l',-5,0.4);
-         }
-         if (guess == 0){
+            strafe('r', 700, 0.5, -90);
+            pointTurn('l', -5, 0.4);
+        }
+        if (guess == 0) {
             moveStraight('f', 3750, 0.0, 0.9);
             waiting(.5);
-             moveStraight('b',-2800,-2.0,0.95);
-            shootThreeTimes(0.25);  
-            moveStraight('f',500,0.0,0.95);
-             strafe('l', 750, 0.5, 0.0);
+            moveStraight('b', -2800, -2.0, 0.95);
+            shootThreeTimes(0.25);
+            moveStraight('f', 500, 0.0, 0.95);
+            strafe('l', 750, 0.5, 0.0);
             strafe('r', 200, 0.5, 0.0);
             SideServo.setPosition(1.0);
-         }
+        }
 
-        
     }
-    
-    
+
     private void initVuforia() {
         final VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
         parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
-    
+
     private void initTfod() {
-        final int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        final int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id",
+                hardwareMap.appContext.getPackageName());
         final TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.65f;
-        (tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia)).loadModelFromAsset("UltimateGoal.tflite", new String[] { "Quad", "Single" });
+        (tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia))
+                .loadModelFromAsset("UltimateGoal.tflite", new String[] { "Quad", "Single" });
     }
-    
+
     String formatAngle(final AngleUnit angleUnit, final double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
-    
+
     String formatDegrees(final double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
-    
+
     void moveStraight(final char fb, final int encoderCount, final double holdAngle, final double motorPower) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         if (fb == 'f') {
             while (leftBack.getCurrentPosition() < encoderCount) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -267,8 +266,7 @@ public class PowerShotAutoBlue extends LinearOpMode
                 rightFront.setPower(-motorPower + (angle - holdAngle) * straightP);
                 rightBack.setPower(-motorPower + (angle - holdAngle) * straightP);
             }
-        }
-        else {
+        } else {
             while (leftBack.getCurrentPosition() > encoderCount) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -288,7 +286,7 @@ public class PowerShotAutoBlue extends LinearOpMode
         rightBack.setPower(0.0);
         rightFront.setPower(0.0);
     }
-    
+
     void pointTurn(final char lr, final double targetAngle, final double motorPower) {
         if (lr == 'l') {
             while (angle < targetAngle) {
@@ -304,8 +302,7 @@ public class PowerShotAutoBlue extends LinearOpMode
                 rightBack.setPower(-motorPower);
                 rightFront.setPower(-motorPower);
             }
-        }
-        else {
+        } else {
             while (angle > targetAngle) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -321,7 +318,7 @@ public class PowerShotAutoBlue extends LinearOpMode
         rightBack.setPower(0.0);
         rightFront.setPower(0.0);
     }
-    
+
     void initializeVision() {
         initVuforia();
         initTfod();
@@ -330,74 +327,78 @@ public class PowerShotAutoBlue extends LinearOpMode
             tfod.setZoom(2.0, 1.78);
         }
     }
-    
+
     void determineNumberOfRings() {
         timer.reset();
         timer.startTime();
         while (timer.time() < .1 && opModeIsActive()) {
-            final List<Recognition> updatedRecognitions = (List<Recognition>)tfod.getRecognitions();
+            final List<Recognition> updatedRecognitions = (List<Recognition>) tfod.getRecognitions();
             close = 0.5;
             for (final Recognition recognition : updatedRecognitions) {
                 if (recognition.getLabel() == "Quad") {
                     ++far;
-                }
-                else {
+                } else {
                     ++middle;
                 }
             }
         }
         if (far > middle && far > close) {
             guess = 2;
-        }
-        else if (middle > close) {
+        } else if (middle > close) {
             guess = 1;
-        }
-        else {
+        } else {
             guess = 0;
         }
     }
-    
+
     void shootOneTime(final double waitTime) {
         timer.reset();
         timer.startTime();
         ShooterServo.setPosition(1.0);
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
     }
-    
-    
+
     void shootThreeTimes(final double waitTime) {
         timer.reset();
         timer.startTime();
         ShooterServo.setPosition(1.0);
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
     }
-    
+
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
@@ -411,12 +412,13 @@ public class PowerShotAutoBlue extends LinearOpMode
         timer.reset();
         GripperServo.setPosition(0.45);
     }
-    
+
     void wobblePickUp() {
         GripperServo.setPosition(1.0);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 1.0) {}
+        while (timer.time() < 1.0) {
+        }
         timer.startTime();
         timer.reset();
         while (timer.time() < 0.6) {
@@ -426,22 +428,24 @@ public class PowerShotAutoBlue extends LinearOpMode
         RightServo.setPower(0.0);
         LeftServo.setPower(0.0);
     }
-    
+
     void waiting(final double waittime) {
-        if (waittime == 0){
+        if (waittime == 0) {
             return;
         }
         timer.startTime();
         timer.reset();
-        while (timer.time() < waittime) {}
+        while (timer.time() < waittime) {
+        }
     }
-    
+
     void strafe(final char lr, final int encoderCounts, final double motorPower, final double holdAngle) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         if (lr == 'l') {
             leftFront.setPower(-motorPower);
             leftBack.setPower(motorPower);

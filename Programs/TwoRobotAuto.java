@@ -25,8 +25,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class TwoRobotAuto extends LinearOpMode
-{
+public class TwoRobotAuto extends LinearOpMode {
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
@@ -75,6 +74,7 @@ public class TwoRobotAuto extends LinearOpMode
     private static final String VUFORIA_KEY = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+
     public TwoRobotAuto() {
         straightP = 0.075;
         visionReadTime = 0.1;
@@ -83,12 +83,12 @@ public class TwoRobotAuto extends LinearOpMode
         timer = new ElapsedTime();
         far = 0.0;
     }
-    
-    boolean startLeft = false; 
+
+    boolean startLeft = false;
     boolean shootStack = true;
     boolean parkFirst = true;
     double startWait = 2;
-    
+
     public void runOpMode() throws InterruptedException {
         ShooterMotor1 = hardwareMap.get(DcMotorEx.class, "SM1");
         IntakeMotor2 = hardwareMap.get(DcMotor.class, "IM2");
@@ -124,7 +124,7 @@ public class TwoRobotAuto extends LinearOpMode
         parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        
+
         telemetry.update();
         timer = new ElapsedTime();
         initializeVision();
@@ -142,46 +142,47 @@ public class TwoRobotAuto extends LinearOpMode
         waiting(startWait);
         moveStraight('f', 1000, 0.0, 0.6);
         if (startLeft == true) {
-        strafe('r',800,0.5,0);
-        }
-        else {
-        strafe('l',1200,0.5,0);
+            strafe('r', 800, 0.5, 0);
+        } else {
+            strafe('l', 1200, 0.5, 0);
         }
         if (shootStack == true) {
-            if (guess == 2){
-            moveStraight('f', 200, 0.0, 0.2);
-            shootThreeTimes(0.5);
-            IntakeServo.setPower(1.0);
-            IntakeServo2.setPower(-1.0);
-            IntakeMotor.setPower(-1.0);
-            IntakeMotor2.setPower(1.0);
-            moveStraight('f', 200, 0.0, 0.2);
-            waiting(1.5);
-            shootThreeTimes(0.25);
-            moveStraight('f', 1300, 0.0, 0.4);
-            waiting(1);
-            shootThreeTimes(0.25);  
+            if (guess == 2) {
+                moveStraight('f', 200, 0.0, 0.2);
+                shootThreeTimes(0.5);
+                IntakeServo.setPower(1.0);
+                IntakeServo2.setPower(-1.0);
+                IntakeMotor.setPower(-1.0);
+                IntakeMotor2.setPower(1.0);
+                moveStraight('f', 200, 0.0, 0.2);
+                waiting(1.5);
+                shootThreeTimes(0.25);
+                moveStraight('f', 1300, 0.0, 0.4);
+                waiting(1);
+                shootThreeTimes(0.25);
             }
-            if (guess == 1){
-            moveStraight('f', 200, 0.0, 0.2);
-            timer.reset();
-            timer.startTime();
-            ShooterServo.setPosition(1.0);
-            while (timer.time() < 0.5) {}
-            ShooterServo.setPosition(0.5);
-            timer.reset();
-            timer.startTime();
-            while (timer.time() < 0.25) {}
-            ShooterServo.setPosition(1.0);
-            IntakeServo.setPower(1.0);
-            IntakeServo2.setPower(-1.0);
-            IntakeMotor.setPower(-1.0);
-            IntakeMotor2.setPower(1.0);
-            moveStraight('f', 1500, 0.0, 0.4);
-            waiting(1.0);
-            shootThreeTimes(0.25);
+            if (guess == 1) {
+                moveStraight('f', 200, 0.0, 0.2);
+                timer.reset();
+                timer.startTime();
+                ShooterServo.setPosition(1.0);
+                while (timer.time() < 0.5) {
+                }
+                ShooterServo.setPosition(0.5);
+                timer.reset();
+                timer.startTime();
+                while (timer.time() < 0.25) {
+                }
+                ShooterServo.setPosition(1.0);
+                IntakeServo.setPower(1.0);
+                IntakeServo2.setPower(-1.0);
+                IntakeMotor.setPower(-1.0);
+                IntakeMotor2.setPower(1.0);
+                moveStraight('f', 1500, 0.0, 0.4);
+                waiting(1.0);
+                shootThreeTimes(0.25);
             }
-            if (guess == 0){
+            if (guess == 0) {
                 moveStraight('f', 200, 0.0, 0.2);
                 IntakeServo.setPower(1.0);
                 IntakeServo2.setPower(-1.0);
@@ -195,8 +196,7 @@ public class TwoRobotAuto extends LinearOpMode
             IntakeServo2.setPower(0);
             IntakeMotor.setPower(0);
             IntakeMotor2.setPower(0);
-            }
-         else {
+        } else {
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
@@ -204,12 +204,12 @@ public class TwoRobotAuto extends LinearOpMode
             moveStraight('f', 1700, 0.0, 0.6);
             waiting(1.0);
             shootThreeTimes(0.25);
-              IntakeServo.setPower(0);
+            IntakeServo.setPower(0);
             IntakeServo2.setPower(0);
             IntakeMotor.setPower(0);
             IntakeMotor2.setPower(0);
-         }
-           
+        }
+
         if (guess == 2) {
             moveStraight('f', 2750, 0.0, 0.9);
             waiting(0.25);
@@ -219,12 +219,12 @@ public class TwoRobotAuto extends LinearOpMode
             waiting(.5);
         }
         if (guess == 1) {
-            pointTurn('l',85,.4);
-            strafe('r',1400,.5,90);
-            strafe('l',200,0.5,90);
+            pointTurn('l', 85, .4);
+            strafe('r', 1400, .5, 90);
+            strafe('l', 200, 0.5, 90);
             SideServo2.setPosition(0.0);
-            strafe('l',600,0.5,90);
-            pointTurn('r',5,0.4);
+            strafe('l', 600, 0.5, 90);
+            pointTurn('r', 5, 0.4);
         }
         if (guess == 0) {
             moveStraight('f', 350, 0.0, 0.75);
@@ -233,54 +233,56 @@ public class TwoRobotAuto extends LinearOpMode
             SideServo2.setPosition(0.0);
             waiting(.5);
         }
-        if (parkFirst == true ){
-        if (guess == 2){
-        strafe('l',1800,0.75,0);
-        moveStraight('b',-2250,0.0,0.9);
-        }
-        if (guess == 1){
-        strafe('l',1200,0.75,0);
-        }
-        if (guess == 0){
-        strafe('l',1800,.75,0);
-        }
-        }
-        else {
-          if (guess == 2){
-        moveStraight('b',-1750,0.0,0.9);
-        }
-            
+        if (parkFirst == true) {
+            if (guess == 2) {
+                strafe('l', 1800, 0.75, 0);
+                moveStraight('b', -2250, 0.0, 0.9);
+            }
+            if (guess == 1) {
+                strafe('l', 1200, 0.75, 0);
+            }
+            if (guess == 0) {
+                strafe('l', 1800, .75, 0);
+            }
+        } else {
+            if (guess == 2) {
+                moveStraight('b', -1750, 0.0, 0.9);
+            }
+
         }
     }
-    
+
     private void initVuforia() {
         final VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
         parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
-    
+
     private void initTfod() {
-        final int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        final int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id",
+                hardwareMap.appContext.getPackageName());
         final TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.65f;
-        (tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia)).loadModelFromAsset("UltimateGoal.tflite", new String[] { "Quad", "Single" });
+        (tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia))
+                .loadModelFromAsset("UltimateGoal.tflite", new String[] { "Quad", "Single" });
     }
-    
+
     String formatAngle(final AngleUnit angleUnit, final double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
-    
+
     String formatDegrees(final double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
-    
+
     void moveStraight(final char fb, final int encoderCount, final double holdAngle, final double motorPower) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         if (fb == 'f') {
             while (leftBack.getCurrentPosition() < encoderCount) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -295,8 +297,7 @@ public class TwoRobotAuto extends LinearOpMode
                 rightFront.setPower(-motorPower + (angle - holdAngle) * straightP);
                 rightBack.setPower(-motorPower + (angle - holdAngle) * straightP);
             }
-        }
-        else {
+        } else {
             while (leftBack.getCurrentPosition() > encoderCount) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -316,7 +317,7 @@ public class TwoRobotAuto extends LinearOpMode
         rightBack.setPower(0.0);
         rightFront.setPower(0.0);
     }
-    
+
     void pointTurn(final char lr, final double targetAngle, final double motorPower) {
         if (lr == 'l') {
             while (angle < targetAngle) {
@@ -332,8 +333,7 @@ public class TwoRobotAuto extends LinearOpMode
                 rightBack.setPower(-motorPower);
                 rightFront.setPower(-motorPower);
             }
-        }
-        else {
+        } else {
             while (angle > targetAngle) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -349,7 +349,7 @@ public class TwoRobotAuto extends LinearOpMode
         rightBack.setPower(0.0);
         rightFront.setPower(0.0);
     }
-    
+
     void initializeVision() {
         initVuforia();
         initTfod();
@@ -358,61 +358,64 @@ public class TwoRobotAuto extends LinearOpMode
             tfod.setZoom(2.0, 1.78);
         }
     }
-    
+
     void determineNumberOfRings() {
         timer.reset();
         timer.startTime();
         while (timer.time() < visionReadTime && opModeIsActive()) {
-            final List<Recognition> updatedRecognitions = (List<Recognition>)tfod.getRecognitions();
+            final List<Recognition> updatedRecognitions = (List<Recognition>) tfod.getRecognitions();
             close = 0.5;
             for (final Recognition recognition : updatedRecognitions) {
                 if (recognition.getLabel() == "Quad") {
                     ++far;
-                }
-                else {
+                } else {
                     ++middle;
                 }
             }
         }
         if (far > middle && far > close) {
             guess = 2;
-        }
-        else if (middle > close) {
+        } else if (middle > close) {
             guess = 1;
-        }
-        else {
+        } else {
             guess = 0;
         }
     }
-    
+
     void shootThreeTimes(final double waitTime) {
         timer.reset();
         timer.startTime();
         ShooterServo.setPosition(1.0);
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {}
+        while (timer.time() < waitTime) {
+        }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         ShooterServo.setPosition(1.0);
     }
-    
+
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
@@ -426,12 +429,13 @@ public class TwoRobotAuto extends LinearOpMode
         timer.reset();
         GripperServo.setPosition(0.45);
     }
-    
+
     void wobblePickUp() {
         GripperServo.setPosition(1.0);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 1.0) {}
+        while (timer.time() < 1.0) {
+        }
         timer.startTime();
         timer.reset();
         while (timer.time() < 0.6) {
@@ -441,19 +445,21 @@ public class TwoRobotAuto extends LinearOpMode
         RightServo.setPower(0.0);
         LeftServo.setPower(0.0);
     }
-    
+
     void waiting(final double waittime) {
         timer.startTime();
         timer.reset();
-        while (timer.time() < waittime) {}
+        while (timer.time() < waittime) {
+        }
     }
-    
+
     void strafe(final char lr, final int encoderCounts, final double motorPower, final double holdAngle) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {}
+        while (timer.time() < 0.25) {
+        }
         if (lr == 'l') {
             leftFront.setPower(-motorPower);
             leftBack.setPower(motorPower);
