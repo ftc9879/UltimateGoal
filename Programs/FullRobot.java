@@ -36,21 +36,29 @@ public class FullRobot extends OpMode {
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
-
-    // Declare needed variables
+    
+    // P Value for strafing
     double straafeP = .05;
+
+    // Motor power variables
     double leftFrontpower;
     double rightFrontpower;
     double leftBackpower;
     double rightBackpower;
+
+    // Drive input variables
     double leftsticky;
     double leftstickx;
     double rightstickx;
     double r;
     double robotangle;
     double rightX;
+
+    // Drive adjustment variables
     double divide;
     double motorPower;
+
+    // Variables for toggling actions
     boolean shooteron;
     boolean isPressed;
     boolean intakeon;
@@ -61,8 +69,12 @@ public class FullRobot extends OpMode {
     boolean isPressed55;
     boolean shooterlow;
     boolean intakereverse;
+
+    // Variables for tracking the state of the shooter motor
     int currentCounts = 0;
     int lastCounts = 0;
+
+    // Variables for tracking the angle of the robot
     double angle;
     String angleVal;
 
