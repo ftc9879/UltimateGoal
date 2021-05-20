@@ -65,28 +65,45 @@ public class PowerShotAuto extends LinearOpMode {
     double divide;
     double straightP;
 
-    // Measures time of stack detection
+    // Determines time of stack detection
     double visionReadTime;
+
+    // Variables for tracking the angle of the robot
     double angle;
     String angleVal;
+
+    // Variables for tracking the state of the shooter motor
     int currentCounts;
     int lastCounts;
+
+    // Setup modifying PID values
     PIDFCoefficients pid;
+
+    // Load TensorFlowData
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+
+    // Prepare a timer
     ElapsedTime timer;
+
+    // Setup variables for voting
     double close;
     double middle;
     double far;
     int guess;
+
+    // Prepare to use the gyro
     Acceleration gravity;
     BNO055IMU imu;
     Orientation angles;
+
+    // Prepare to use Vuforia and Tensorflow
     private static final String VUFORIA_KEY = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+    // Store constants for this autonomous
     public PowerShotAuto() {
         straightP = 0.075;
         visionReadTime = 0.1;
@@ -96,15 +113,23 @@ public class PowerShotAuto extends LinearOpMode {
         far = 0.0;
     }
 
+    // Adjustable values for alternate paths
     boolean startLeft = true;
     boolean shootStack = true;
     boolean parkFirst = false;
     double startWait = 0;
 
     public void runOpMode() throws InterruptedException {
+        // Map all motors
         ShooterMotor1 = hardwareMap.get(DcMotorEx.class, "SM1");
         IntakeMotor2 = hardwareMap.get(DcMotor.class, "IM2");
         IntakeMotor = hardwareMap.get(DcMotor.class, "IM1");
+        leftFront = hardwareMap.dcMotor.get("LF");
+        rightFront = hardwareMap.dcMotor.get("RF");
+        leftBack = hardwareMap.dcMotor.get("LB");
+        rightBack = hardwareMap.dcMotor.get("RB");
+
+        // Map all servos
         ShooterServo = hardwareMap.get(Servo.class, "s1");
         GripperServo = hardwareMap.get(Servo.class, "GS");
         LeftServo = hardwareMap.get(CRServo.class, "LS");
@@ -113,21 +138,23 @@ public class PowerShotAuto extends LinearOpMode {
         IntakeServo2 = hardwareMap.get(CRServo.class, "IS2");
         SideServo = hardwareMap.get(Servo.class, "SS");
         SideServo2 = hardwareMap.get(Servo.class, "SS2");
+
+        // Set the mode and zero power behavior of motors
         ShooterMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront = hardwareMap.dcMotor.get("LF");
-        rightFront = hardwareMap.dcMotor.get("RF");
-        leftBack = hardwareMap.dcMotor.get("LB");
-        rightBack = hardwareMap.dcMotor.get("RB");
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Setup and apply PIDF for the shooter motor
         final PIDFCoefficients newPIDF = new PIDFCoefficients(1000.0, 10.0, 0.0, 14.3);
         ShooterMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
         pid = ShooterMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Initialize the gyro
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -137,16 +164,26 @@ public class PowerShotAuto extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        telemetry.update();
+        // Create the timer
         timer = new ElapsedTime();
+
+        // Intialize the vision system
         initializeVision();
+
+        // Let the drivers know the robot is ready
         telemetry.addData("ROBOT IS READY", "PRESS START TO BEGIN");
         telemetry.update();
+
+        // Start when the play button is pressed 
         waitForStart();
+
+        // Detect the amount of rings in the starting stack
         determineNumberOfRings();
         if (tfod != null) {
             tfod.shutdown();
         }
+
+        // Move to and shoot the power shots
         ShooterMotor1.setPower(-0.52);
         SideServo2.setPosition(1.0);
         moveStraight('f', 2800, -2, 0.8);
@@ -157,6 +194,7 @@ public class PowerShotAuto extends LinearOpMode {
         shootOneTime(0.5);
 
         if (shootStack == true & guess > 0) {
+            // Return to the stack
             strafe('r', 750, 0.5, 0);
             moveStraight('b', -1650, 0.0, 0.8);
             IntakeServo.setPower(1.0);
@@ -169,6 +207,8 @@ public class PowerShotAuto extends LinearOpMode {
             } else {
                 strafe('r', 900, 0.5, 0);
             }
+
+            // Shoot the stack
             ShooterMotor1.setPower(-0.61);
             if (guess == 2) {
                 moveStraight('f', 400, 0.0, 0.2);
@@ -184,10 +224,10 @@ public class PowerShotAuto extends LinearOpMode {
                 waiting(1.5);
                 moveStraight('f', 1300, 0.0, 0.4);
                 shootThreeTimes(.25);
-
             }
 
         } else {
+            // Return to the stack
             strafe('r', 250, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
             waiting(7); // normal: 9.5 8373: 9.5 92: 7
@@ -199,41 +239,53 @@ public class PowerShotAuto extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
         }
         if (guess == 2) {
+            // Place the wobble goal
             moveStraight('f', 2600, 0.0, 0.9);
-
             strafe('r', 550, 0.5, 0.0);
-
             SideServo2.setPosition(0.0);
             waiting(.5);
+
+            // Return behind the line and shoot "bonus shots"
             strafe('l', 600, 0.8, 0);
-
             moveStraight('b', -2675, -2.0, 0.95);
-
             shootThreeTimes(0.25);
+
+            // Park on the line
             moveStraight('f', 300, 0.0, 0.95);
         }
         if (guess == 1) {
+            // Place the wobble goal
             pointTurn('l', 85, .4);
             strafe('r', 1400, .5, 90);
             strafe('l', 200, 0.5, 90);
             SideServo2.setPosition(0.0);
+
+            // Park on the line
             strafe('l', 600, 0.5, 90);
             pointTurn('r', 5, 0.4);
         }
         if (guess == 0) {
+            // Sweep the field for extra rings
             moveStraight('f', 3750, 0.0, 0.9);
             waiting(.5);
             moveStraight('b', -2700, -2, 0.95);
+
+            // Shoot "bonus rings"
             shootThreeTimes(0.25);
+
+            // Place the wobble goal
             moveStraight('f', 500, 0.0, 0.95);
             strafe('r', 750, 0.5, 0.0);
             strafe('l', 250, 0.5, 0.0);
             SideServo2.setPosition(0.0);
+
+            // Park on the line
             strafe('l', 500, 0.5, 0.0);
         }
 
     }
 
+    // A function for initializing Vuforia
     private void initVuforia() {
         final VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
@@ -241,6 +293,7 @@ public class PowerShotAuto extends LinearOpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 
+    // A function for initializing TensorFlow
     private void initTfod() {
         final int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id",
                 hardwareMap.appContext.getPackageName());
@@ -250,6 +303,7 @@ public class PowerShotAuto extends LinearOpMode {
                 .loadModelFromAsset("UltimateGoal.tflite", new String[] { "Quad", "Single" });
     }
 
+    // Functions used for reading gyro input
     String formatAngle(final AngleUnit angleUnit, final double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
@@ -258,6 +312,7 @@ public class PowerShotAuto extends LinearOpMode {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
+    // A function for moving the robot straight based on direction, encoders, the angle to hold, and motor power
     void moveStraight(final char fb, final int encoderCount, final double holdAngle, final double motorPower) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -300,6 +355,7 @@ public class PowerShotAuto extends LinearOpMode {
         rightFront.setPower(0.0);
     }
 
+    // A function for point turning based on direction, the angle to turn to, and motor power
     void pointTurn(final char lr, final double targetAngle, final double motorPower) {
         if (lr == 'l') {
             while (angle < targetAngle) {
@@ -332,6 +388,7 @@ public class PowerShotAuto extends LinearOpMode {
         rightFront.setPower(0.0);
     }
 
+    // A function for initializing all vision 
     void initializeVision() {
         initVuforia();
         initTfod();
@@ -341,6 +398,7 @@ public class PowerShotAuto extends LinearOpMode {
         }
     }
 
+    // A function that detects the number of rings in the stack
     void determineNumberOfRings() {
         timer.reset();
         timer.startTime();
@@ -364,6 +422,7 @@ public class PowerShotAuto extends LinearOpMode {
         }
     }
 
+    // A function that shoots one ring
     void shootOneTime(final double waitTime) {
         timer.reset();
         timer.startTime();
@@ -378,6 +437,7 @@ public class PowerShotAuto extends LinearOpMode {
         ShooterServo.setPosition(1.0);
     }
 
+    // A function that shoots three rings
     void shootThreeTimes(final double waitTime) {
         timer.reset();
         timer.startTime();
@@ -412,6 +472,7 @@ public class PowerShotAuto extends LinearOpMode {
         ShooterServo.setPosition(1.0);
     }
 
+    // A function that prepares the robot to pick up a wobble goal
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
@@ -426,6 +487,7 @@ public class PowerShotAuto extends LinearOpMode {
         GripperServo.setPosition(0.45);
     }
 
+    // A function that picks up a wobble goal
     void wobblePickUp() {
         GripperServo.setPosition(1.0);
         timer.startTime();
@@ -442,6 +504,7 @@ public class PowerShotAuto extends LinearOpMode {
         LeftServo.setPower(0.0);
     }
 
+    // A function that implements a pause
     void waiting(final double waittime) {
         timer.startTime();
         timer.reset();
@@ -449,6 +512,7 @@ public class PowerShotAuto extends LinearOpMode {
         }
     }
 
+    // A function that allows the robot to strafe based on direction, encoder counts, motor power, and an angle to hold
     void strafe(final char lr, final int encoderCounts, final double motorPower, final double holdAngle) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
