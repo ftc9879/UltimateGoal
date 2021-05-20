@@ -158,7 +158,7 @@ public class PowerShotAuto extends LinearOpMode {
 
         if (shootStack == true & guess > 0) {
             strafe('r', 750, 0.5, 0);
-            moveStraight('b', -1750, 0.0, 0.8);
+            moveStraight('b', -1650, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
@@ -199,7 +199,7 @@ public class PowerShotAuto extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
         }
         if (guess == 2) {
-            moveStraight('f', 2750, 0.0, 0.9);
+            moveStraight('f', 2600, 0.0, 0.9);
 
             strafe('r', 550, 0.5, 0.0);
 
@@ -207,10 +207,10 @@ public class PowerShotAuto extends LinearOpMode {
             waiting(.5);
             strafe('l', 600, 0.8, 0);
 
-            moveStraight('b', -2700, -2.0, 0.95);
+            moveStraight('b', -2675, -2.0, 0.95);
 
             shootThreeTimes(0.25);
-            moveStraight('f', 500, 0.0, 0.95);
+            moveStraight('f', 300, 0.0, 0.95);
         }
         if (guess == 1) {
             pointTurn('l', 85, .4);
