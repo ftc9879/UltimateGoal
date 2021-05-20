@@ -26,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 @Autonomous
 
 public class PowerShotAutoBlue extends LinearOpMode {
+    // Declare all motors
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
@@ -33,6 +34,8 @@ public class PowerShotAutoBlue extends LinearOpMode {
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
+
+    // Declare all servos
     Servo ShooterServo;
     CRServo LeftServo;
     CRServo RightServo;
@@ -42,39 +45,64 @@ public class PowerShotAutoBlue extends LinearOpMode {
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
+
+    // Motor power variables
     double leftFrontpower;
     double rightFrontpower;
     double leftBackpower;
     double rightBackpower;
+
+    // Drive input variables
     double leftsticky;
     double leftstickx;
     double rightstickx;
     double r;
     double robotangle;
     double rightX;
+
+    // Drive adjustment variables
     double divide;
     double straightP;
+
+    // Determines time of stack detection
     double visionReadTime;
+
+    // Variables for tracking the angle of the robot
     double angle;
     String angleVal;
+
+    // Variables for tracking the state of the shooter motor
     int currentCounts;
     int lastCounts;
+
+    // Setup modifying PID values
     PIDFCoefficients pid;
+
+    // Load TensorFlowData
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+
+    // Prepare a timer
     ElapsedTime timer;
+
+    // Setup variables for voting
     double close;
     double middle;
     double far;
     int guess;
+
+    // Prepare to use the gyro
     Acceleration gravity;
     BNO055IMU imu;
     Orientation angles;
+
+    // Prepare to use Vuforia and Tensorflow
     private static final String VUFORIA_KEY = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+    // Store constants for this autonomous
     public PowerShotAutoBlue() {
         straightP = 0.075;
         visionReadTime = 0.1;
@@ -84,15 +112,23 @@ public class PowerShotAutoBlue extends LinearOpMode {
         far = 0.0;
     }
 
+    // Adjustable values for alternate paths
     boolean startLeft = true;
     boolean shootStack = true;
     boolean parkFirst = false;
     double startWait = 0;
 
     public void runOpMode() throws InterruptedException {
+        // Map all motors
         ShooterMotor1 = hardwareMap.get(DcMotorEx.class, "SM1");
         IntakeMotor2 = hardwareMap.get(DcMotor.class, "IM2");
         IntakeMotor = hardwareMap.get(DcMotor.class, "IM1");
+        leftFront = hardwareMap.dcMotor.get("LF");
+        rightFront = hardwareMap.dcMotor.get("RF");
+        leftBack = hardwareMap.dcMotor.get("LB");
+        rightBack = hardwareMap.dcMotor.get("RB");
+
+        // Map all servos
         ShooterServo = hardwareMap.get(Servo.class, "s1");
         GripperServo = hardwareMap.get(Servo.class, "GS");
         LeftServo = hardwareMap.get(CRServo.class, "LS");
@@ -100,23 +136,25 @@ public class PowerShotAutoBlue extends LinearOpMode {
         IntakeServo = hardwareMap.get(CRServo.class, "IS");
         IntakeServo2 = hardwareMap.get(CRServo.class, "IS2");
         SideServo = hardwareMap.get(Servo.class, "SS");
-        SideServo2 = hardwareMap.get(Servo.class, "SS2");
+        SideServo2 = hardwareMap.get(Servo.class, "SS2")
+
+        // Set the mode and zero power behavior of motors
         ShooterMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront = hardwareMap.dcMotor.get("LF");
-        rightFront = hardwareMap.dcMotor.get("RF");
-        leftBack = hardwareMap.dcMotor.get("LB");
-        rightBack = hardwareMap.dcMotor.get("RB");
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Setup and apply PIDF to the shooter motor
         final PIDFCoefficients newPIDF = new PIDFCoefficients(1000.0, 10.0, 0.0, 14.3);
         ShooterMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
         pid = ShooterMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        // Initialize the gyro
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
@@ -125,12 +163,20 @@ public class PowerShotAutoBlue extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        telemetry.update();
+        // Create a timer
         timer = new ElapsedTime();
+
+        // Initialize the vision system
         initializeVision();
+
+        // Let the drivers know the robot is ready
         telemetry.addData("ROBOT IS READY", "PRESS START TO BEGIN");
         telemetry.update();
+
+        // Start when the play button is pressed
         waitForStart();
+
+        // Detect the amount of rings in the starting stack 
         determineNumberOfRings();
         if (tfod != null) {
             tfod.shutdown();
