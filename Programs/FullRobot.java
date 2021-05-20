@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 //import selenium
 @TeleOp
 public class FullRobot extends OpMode {
+
+    // Declare all motors
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
@@ -24,6 +26,8 @@ public class FullRobot extends OpMode {
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
+
+    // Declare all servos
     Servo ShooterServo;
     CRServo LeftServo;
     CRServo RightServo;
@@ -32,6 +36,8 @@ public class FullRobot extends OpMode {
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
+
+    // Declare needed variables
     double straafeP = .05;
     double leftFrontpower;
     double rightFrontpower;
@@ -59,9 +65,17 @@ public class FullRobot extends OpMode {
     int lastCounts = 0;
     double angle;
     String angleVal;
+
+    // Setup modifying PID values
     PIDFCoefficients pid;
+
+    // Prepare a timer
     ElapsedTime timer;
+
+    // Declare the imu 
     BNO055IMU imu;
+
+    // Prepare to use the gyro
     Orientation angles;
     
   
@@ -70,9 +84,16 @@ public class FullRobot extends OpMode {
 
     @Override
     public void init() {
+        // Map all motors
         ShooterMotor1 = hardwareMap.get(DcMotorEx.class, "SM1");
         IntakeMotor2 = hardwareMap.get(DcMotor.class, "IM2");
         IntakeMotor = hardwareMap.get(DcMotor.class, "IM1");
+        leftFront = hardwareMap.dcMotor.get("LF");
+        rightFront = hardwareMap.dcMotor.get("RF");
+        leftBack = hardwareMap.dcMotor.get("LB");
+        rightBack = hardwareMap.dcMotor.get("RB");
+
+        // Map all servos
         ShooterServo = hardwareMap.get(Servo.class, "s1");
         GripperServo = hardwareMap.get(Servo.class,"GS");
         LeftServo = hardwareMap.get(CRServo.class,"LS");
@@ -81,16 +102,16 @@ public class FullRobot extends OpMode {
         IntakeServo2 = hardwareMap.get(CRServo.class,"IS2");
         SideServo = hardwareMap.get(Servo.class,"SS");
         SideServo2 = hardwareMap.get(Servo.class,"SS2");
+
+        // Set modes of motors
         ShooterMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront = hardwareMap.dcMotor.get("LF");
-        rightFront = hardwareMap.dcMotor.get("RF");
-        leftBack = hardwareMap.dcMotor.get("LB");
-        rightBack = hardwareMap.dcMotor.get("RB");
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Initialize the gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -99,6 +120,8 @@ public class FullRobot extends OpMode {
         parameters.loggingTag          = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        // Initialize boolean values
         shooteron = false;
         isPressed = false;
         intakeon = false;
@@ -110,16 +133,19 @@ public class FullRobot extends OpMode {
         shooterlow = false;
         intakereverse = false;
 
+        // Setup the shooter motor
         PIDFCoefficients newPIDF = new PIDFCoefficients(1000,10,0,14.3);
         ShooterMotor1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, newPIDF);
         pid = ShooterMotor1.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        telemetry.update(); 
+
+        // Create the timer
         timer = new ElapsedTime();
         
     }
        
     @Override
     public void loop() {
+        // Print shooter motor data
         telemetry.addData("isPIDMode?", ShooterMotor1.getMode().isPIDMode());
         telemetry.addData("p", pid.p );
         telemetry.addData("i", pid.i );
@@ -127,6 +153,8 @@ public class FullRobot extends OpMode {
         telemetry.addData("f", pid.f );
         telemetry.addData("Motor Power", ShooterMotor1.getPower());
         telemetry.update(); 
+
+        // Brings robot to starting orientation
         if (gamepad1.dpad_up) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             String angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -153,6 +181,7 @@ public class FullRobot extends OpMode {
                 rightBack.setPower(0);
                 rightFront.setPower(0);
             }
+        // Strafes robot along starting orientation     
         } else if (gamepad1.right_trigger > .5 || gamepad1.left_trigger > .5) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             String angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
@@ -171,47 +200,7 @@ public class FullRobot extends OpMode {
                 leftsticky = 0;
                 rightstickx = -straafeP*angle;
             }
-            r = Math.hypot(leftstickx, leftsticky);
-            robotangle = Math.atan2(leftsticky, leftstickx) - Math.PI / 4;
-            rightX = rightstickx;
-            leftFrontpower = (r * Math.cos(robotangle)) * (2 / Math.sqrt(2)) + rightX;
-            leftBackpower = (r * Math.sin(robotangle)) * (2 / Math.sqrt(2)) + rightX;
-            rightFrontpower = (r * Math.sin(robotangle)) * (2 / Math.sqrt(2)) - rightX;
-            rightBackpower = (r * Math.cos(robotangle)) * (2 / Math.sqrt(2)) - rightX;
-            if (leftFrontpower > 1 || leftFrontpower < -1) {
-                divide = Math.abs(leftFrontpower);
-                leftFrontpower = leftFrontpower / divide;
-                leftBackpower = leftBackpower / divide;
-                rightFrontpower = rightFrontpower / divide;
-                rightBackpower = rightBackpower / divide;
-            } else if (leftBackpower > 1 || leftBackpower < -1) {
-                divide = Math.abs(leftBackpower);
-                leftFrontpower = leftFrontpower / divide;
-                leftBackpower = leftBackpower / divide;
-                rightFrontpower = rightFrontpower / divide;
-                rightBackpower = rightBackpower / divide;
-            } else if (rightFrontpower > 1 || rightFrontpower < -1) {
-                divide = Math.abs(rightFrontpower);
-                leftFrontpower = leftFrontpower / divide;
-                leftBackpower = leftBackpower / divide;
-                rightFrontpower = rightFrontpower / divide;
-                rightBackpower = rightBackpower / divide;
-            } else if (rightBackpower > 1 || rightBackpower < -1) {
-                divide = Math.abs(rightBackpower);
-                leftFrontpower = leftFrontpower / divide;
-                leftBackpower = leftBackpower / divide;
-                rightFrontpower = rightFrontpower / divide;
-                rightBackpower = rightBackpower / divide;
-            }
-        
-            leftFront.setPower(-leftFrontpower);
-            rightFront.setPower(rightFrontpower);
-            leftBack.setPower(-leftBackpower);
-            rightBack.setPower(rightBackpower);
-        } else {
-            leftstickx = -gamepad1.left_stick_x;
-            leftsticky = gamepad1.left_stick_y;
-            rightstickx = -gamepad1.right_stick_x;
+            // Uses values to determine motor powers 
             r = Math.hypot(leftstickx, leftsticky);
             robotangle = Math.atan2(leftsticky, leftstickx) - Math.PI / 4;
             rightX = rightstickx;
@@ -245,10 +234,59 @@ public class FullRobot extends OpMode {
                 rightBackpower = rightBackpower / divide;
             }
             
+            // Applies motor powers
             leftFront.setPower(-leftFrontpower);
             rightFront.setPower(rightFrontpower);
             leftBack.setPower(-leftBackpower);
             rightBack.setPower(rightBackpower);
+
+        } else {
+            // Robot control if not strafing 
+            leftstickx = -gamepad1.left_stick_x;
+            leftsticky = gamepad1.left_stick_y;
+            rightstickx = -gamepad1.right_stick_x;
+
+            // Uses values to determine motor powers 
+            r = Math.hypot(leftstickx, leftsticky);
+            robotangle = Math.atan2(leftsticky, leftstickx) - Math.PI / 4;
+            rightX = rightstickx;
+            leftFrontpower = (r * Math.cos(robotangle)) * (2 / Math.sqrt(2)) + rightX;
+            leftBackpower = (r * Math.sin(robotangle)) * (2 / Math.sqrt(2)) + rightX;
+            rightFrontpower = (r * Math.sin(robotangle)) * (2 / Math.sqrt(2)) - rightX;
+            rightBackpower = (r * Math.cos(robotangle)) * (2 / Math.sqrt(2)) - rightX;
+            if (leftFrontpower > 1 || leftFrontpower < -1) {
+                divide = Math.abs(leftFrontpower);
+                leftFrontpower = leftFrontpower / divide;
+                leftBackpower = leftBackpower / divide;
+                rightFrontpower = rightFrontpower / divide;
+                rightBackpower = rightBackpower / divide;
+            } else if (leftBackpower > 1 || leftBackpower < -1) {
+                divide = Math.abs(leftBackpower);
+                leftFrontpower = leftFrontpower / divide;
+                leftBackpower = leftBackpower / divide;
+                rightFrontpower = rightFrontpower / divide;
+                rightBackpower = rightBackpower / divide;
+            } else if (rightFrontpower > 1 || rightFrontpower < -1) {
+                divide = Math.abs(rightFrontpower);
+                leftFrontpower = leftFrontpower / divide;
+                leftBackpower = leftBackpower / divide;
+                rightFrontpower = rightFrontpower / divide;
+                rightBackpower = rightBackpower / divide;
+            } else if (rightBackpower > 1 || rightBackpower < -1) {
+                divide = Math.abs(rightBackpower);
+                leftFrontpower = leftFrontpower / divide;
+                leftBackpower = leftBackpower / divide;
+                rightFrontpower = rightFrontpower / divide;
+                rightBackpower = rightBackpower / divide;
+            }
+            
+            // Applies motor powers
+            leftFront.setPower(-leftFrontpower);
+            rightFront.setPower(rightFrontpower);
+            leftBack.setPower(-leftBackpower);
+            rightBack.setPower(rightBackpower);
+
+            // Print driver motor data
             telemetry.addData("leftFront", leftFrontpower);
             telemetry.addData("rightFront", rightFrontpower);
             telemetry.addData("leftBack", leftBackpower);
@@ -256,7 +294,7 @@ public class FullRobot extends OpMode {
             telemetry.update();
         }
 
-
+        // Toggles shooter motor to high goal setting
         if (gamepad2.x) {
             shooterlow = false;
             if(isPressed == false) {
@@ -269,6 +307,7 @@ public class FullRobot extends OpMode {
                     shooteron = false;
                 }
             }
+        // Toggles shooter motor to power shot / mid goal setting
         } else if (gamepad2.dpad_down) {
             shooteron = false;
             if(isPressed55 == false) {
@@ -286,6 +325,8 @@ public class FullRobot extends OpMode {
             isPressed = false;
             isPressed55 = false;
         }
+
+        // Record motor speed to log for later analysis
         if(shooteron) {
             if(timer.time()>0.1){
                 currentCounts = ShooterMotor1.getCurrentPosition();
@@ -296,6 +337,8 @@ public class FullRobot extends OpMode {
             }
             
         } 
+
+        // Toggles intake 
         if (gamepad1.a) {
             if(isPressed2 == false) {
                 isPressed2 = true;
@@ -315,7 +358,8 @@ public class FullRobot extends OpMode {
                     intakeon = false;
                 }
             }
-            
+        
+        // Toggles intake (reversed)
         } else if (gamepad2.y) {
             if(isPressed4 == false) {
                 isPressed4 = true;
@@ -338,25 +382,28 @@ public class FullRobot extends OpMode {
             isPressed2 = false;
             isPressed4 = false;
         }
-    
+        
+        // Shoots rings
         if (gamepad2.a) {
             ShooterServo.setPosition(.5);
         } else {
             ShooterServo.setPosition(1);
         }
         
+        // Bring wobble goal arm up
         if(gamepad2.left_bumper) {
             LeftServo.setPower(-1);
             RightServo.setPower(-1);
-        }
-        else if (gamepad2.right_bumper) {
+        // Bring wobble goal arm down
+        } else if (gamepad2.right_bumper) {
             LeftServo.setPower(1);
             RightServo.setPower(1);
-        }
-        else {
+        } else {
             LeftServo.setPower(0);
             RightServo.setPower(0);
         }
+        
+        // Toggles gripper position
         if (gamepad2.b) {
             if(isPressed3 == false) {
                 isPressed3 = true;
@@ -372,7 +419,8 @@ public class FullRobot extends OpMode {
         } else {
             isPressed3 = false;
         }
-
+        
+        // Release for autonomous wobble goal latches
         if(gamepad2.dpad_right){
             SideServo.setPosition(1);
         } else {
