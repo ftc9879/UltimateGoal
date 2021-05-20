@@ -26,6 +26,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 @Autonomous
 
 public class PowerShotAuto extends LinearOpMode {
+
+    // Declare all motors
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
@@ -33,6 +35,8 @@ public class PowerShotAuto extends LinearOpMode {
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
+
+    // Declare all servos
     Servo ShooterServo;
     CRServo LeftServo;
     CRServo RightServo;
@@ -42,18 +46,26 @@ public class PowerShotAuto extends LinearOpMode {
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
+
+    // Motor power variables
     double leftFrontpower;
     double rightFrontpower;
     double leftBackpower;
     double rightBackpower;
+
+    // Drive input variables
     double leftsticky;
     double leftstickx;
     double rightstickx;
     double r;
     double robotangle;
     double rightX;
+
+    // Drive adjustment variables
     double divide;
     double straightP;
+
+    // Measures time of stack detection
     double visionReadTime;
     double angle;
     String angleVal;
@@ -215,8 +227,9 @@ public class PowerShotAuto extends LinearOpMode {
             shootThreeTimes(0.25);
             moveStraight('f', 500, 0.0, 0.95);
             strafe('r', 750, 0.5, 0.0);
-            strafe('l', 200, 0.5, 0.0);
+            strafe('l', 250, 0.5, 0.0);
             SideServo2.setPosition(0.0);
+            strafe('l', 500, 0.5, 0.0);
         }
 
     }

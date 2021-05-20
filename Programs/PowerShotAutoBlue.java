@@ -217,6 +217,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             strafe('l', 750, 0.5, 0.0);
             strafe('r', 200, 0.5, 0.0);
             SideServo.setPosition(1.0);
+            strafe('r', 550, 0.5, 0.0);
         }
 
     }
