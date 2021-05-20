@@ -313,7 +313,7 @@ public class FullRobot extends OpMode {
                 isPressed = true;
                 if (shooteron == false) {
                     shooteron = true;
-                    ShooterMotor1.setPower(-.625);
+                    ShooterMotor1.setPower(-.61);
                 } else {
                     ShooterMotor1.setPower(0);
                     shooteron = false;
