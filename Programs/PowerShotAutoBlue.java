@@ -187,7 +187,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
         }
         if (guess == 2) {
-            moveStraight('f', 2750, 0.0, 0.9);
+            moveStraight('f', 2600, 0.0, 0.9);
 
             strafe('l', 750, 0.5, 0.0);
 
@@ -195,10 +195,10 @@ public class PowerShotAutoBlue extends LinearOpMode {
             waiting(.5);
             strafe('r', 600, 0.8, 0);
 
-            moveStraight('b', -2800, -2.0, 0.95);
+            moveStraight('b', -2750, -2.0, 0.95);
 
             shootThreeTimes(0.25);
-            moveStraight('f', 500, 0.0, 0.95);
+            moveStraight('f', 250, 0.0, 0.95);
         }
         if (guess == 1) {
             pointTurn('r', -85, .4);
