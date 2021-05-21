@@ -318,7 +318,7 @@ public class PowerShotAuto extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         if (fb == 'f') {
             while (leftBack.getCurrentPosition() < encoderCount && opModeIsActive()) {
@@ -427,12 +427,12 @@ public class PowerShotAuto extends LinearOpMode {
         timer.reset();
         timer.startTime();
         ShooterServo.setPosition(1.0);
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
     }
@@ -442,32 +442,32 @@ public class PowerShotAuto extends LinearOpMode {
         timer.reset();
         timer.startTime();
         ShooterServo.setPosition(1.0);
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
     }
@@ -476,7 +476,7 @@ public class PowerShotAuto extends LinearOpMode {
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
-        while (timer.time() < 1.75) {
+        while (timer.time() < 1.75 && opModeIsActive()) {
             RightServo.setPower(1.0);
             LeftServo.setPower(1.0);
         }
@@ -492,11 +492,11 @@ public class PowerShotAuto extends LinearOpMode {
         GripperServo.setPosition(1.0);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 1.0) {
+        while (timer.time() < 1.0 && opModeIsActive()) {
         }
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.6) {
+        while (timer.time() < 0.6 && opModeIsActive()) {
             RightServo.setPower(-1.0);
             LeftServo.setPower(-1.0);
         }
@@ -518,14 +518,14 @@ public class PowerShotAuto extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         if (lr == 'l') {
             leftFront.setPower(-motorPower);
             leftBack.setPower(motorPower);
             rightFront.setPower(-motorPower);
             rightBack.setPower(motorPower);
-            while (leftBack.getCurrentPosition() < encoderCounts) {
+            while (leftBack.getCurrentPosition() < encoderCounts && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -540,7 +540,7 @@ public class PowerShotAuto extends LinearOpMode {
             leftBack.setPower(-motorPower);
             rightFront.setPower(motorPower);
             rightBack.setPower(-motorPower);
-            while (leftBack.getCurrentPosition() > -encoderCounts) {
+            while (leftBack.getCurrentPosition() > -encoderCounts && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
