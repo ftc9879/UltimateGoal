@@ -136,7 +136,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         IntakeServo = hardwareMap.get(CRServo.class, "IS");
         IntakeServo2 = hardwareMap.get(CRServo.class, "IS2");
         SideServo = hardwareMap.get(Servo.class, "SS");
-        SideServo2 = hardwareMap.get(Servo.class, "SS2")
+        SideServo2 = hardwareMap.get(Servo.class, "SS2");
 
         // Set the mode and zero power behavior of motors
         ShooterMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -181,6 +181,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         if (tfod != null) {
             tfod.shutdown();
         }
+        // Move to and shoot the power shots
         ShooterMotor1.setPower(-0.52);
         SideServo.setPosition(0.0);
         moveStraight('f', 2800, 0.0, 0.8);
@@ -190,7 +191,9 @@ public class PowerShotAutoBlue extends LinearOpMode {
         strafe('r', 200, .5, 0);
         shootOneTime(0.5);
 
+        
         if (shootStack == true & guess > 0) {
+            // If we are shooting the stack, move to it
             strafe('l', 750, 0.5, 0);
             moveStraight('b', -1550, 0.0, 0.8);
             IntakeServo.setPower(1.0);
@@ -203,8 +206,10 @@ public class PowerShotAutoBlue extends LinearOpMode {
             } else {
                 strafe('l', 500, 0.5, 0);
             }
+
             ShooterMotor1.setPower(-0.61);
             if (guess == 2) {
+                // Shoot the stack
                 moveStraight('f', 400, 0.0, 0.3);
                 waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
                 shootThreeTimes(0.25);
@@ -213,6 +218,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
                 shootThreeTimes(0.25);
             }
             if (guess == 1) {
+                // Shoot the stack
                 waiting(2.5); // normal: 0 8373: 5 92: 0 17040: 2.5
                 moveStraight('f', 400, 0.0, 0.3);
                 waiting(1.5);
@@ -222,6 +228,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             }
 
         } else {
+            // Move to the stack
             strafe('l', 250, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
             waiting(9.5); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
@@ -233,41 +240,53 @@ public class PowerShotAutoBlue extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
         }
         if (guess == 2) {
+            // Sweep the floor for extra rings and drop the wobble goal
             moveStraight('f', 2600, 0.0, 0.9);
-
             strafe('l', 750, 0.5, 0.0);
-
             SideServo.setPosition(1.0);
             waiting(.5);
             strafe('r', 600, 0.8, 0);
-
             moveStraight('b', -2750, -2.0, 0.95);
-
+            
+            // Shoot "bonus rings"
             shootThreeTimes(0.25);
+
+            // Park on the line
             moveStraight('f', 250, 0.0, 0.95);
         }
         if (guess == 1) {
             pointTurn('r', -85, .4);
+            // Drop the wobble goal
             strafe('l', 1300, .5, -90);
             strafe('r', 200, 0.5, -90);
             SideServo.setPosition(1.0);
+
+            // Park on the line
             strafe('r', 700, 0.5, -90);
             pointTurn('l', -5, 0.4);
         }
         if (guess == 0) {
+            // Sweep the floor for extra rings
             moveStraight('f', 3750, 0.0, 0.9);
             waiting(.5);
             moveStraight('b', -2800, -2.0, 0.95);
+
+            // Shoot "bonus rings"
             shootThreeTimes(0.25);
+
+            // Place the wivvke goal
             moveStraight('f', 500, 0.0, 0.95);
             strafe('l', 750, 0.5, 0.0);
             strafe('r', 200, 0.5, 0.0);
             SideServo.setPosition(1.0);
+
+            // Park on the line
             strafe('r', 550, 0.5, 0.0);
         }
 
     }
 
+    // A method for initializing Vuforia
     private void initVuforia() {
         final VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
@@ -275,6 +294,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 
+    // A method for initializing TensorFlow
     private void initTfod() {
         final int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id",
                 hardwareMap.appContext.getPackageName());
@@ -284,6 +304,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
                 .loadModelFromAsset("UltimateGoal.tflite", new String[] { "Quad", "Single" });
     }
 
+    // Methods used for reading gyro input
     String formatAngle(final AngleUnit angleUnit, final double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
@@ -292,6 +313,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
+    // A method for moving the robot straight based on direction, encoders, the angle to hold, and motor power
     void moveStraight(final char fb, final int encoderCount, final double holdAngle, final double motorPower) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -334,6 +356,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         rightFront.setPower(0.0);
     }
 
+    // A method for point turning based on direction, the angle to turn to, and motor power
     void pointTurn(final char lr, final double targetAngle, final double motorPower) {
         if (lr == 'l') {
             while (angle < targetAngle) {
@@ -366,6 +389,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         rightFront.setPower(0.0);
     }
 
+    // A method for initializing all vision 
     void initializeVision() {
         initVuforia();
         initTfod();
@@ -375,6 +399,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         }
     }
 
+    // A method that detects the number of rings in the stack
     void determineNumberOfRings() {
         timer.reset();
         timer.startTime();
@@ -398,6 +423,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         }
     }
 
+    // A method that shoots one ring
     void shootOneTime(final double waitTime) {
         timer.reset();
         timer.startTime();
@@ -412,6 +438,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         ShooterServo.setPosition(1.0);
     }
 
+    // A method that prepares the robot to pick up a wobble goal
     void shootThreeTimes(final double waitTime) {
         timer.reset();
         timer.startTime();
@@ -446,6 +473,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         ShooterServo.setPosition(1.0);
     }
 
+    // A method that picks up a wobble goal
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
@@ -460,6 +488,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         GripperServo.setPosition(0.45);
     }
 
+    // A method that picks up a wobble goal
     void wobblePickUp() {
         GripperServo.setPosition(1.0);
         timer.startTime();
@@ -476,6 +505,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         LeftServo.setPower(0.0);
     }
 
+    // A method that implements a pause
     void waiting(final double waittime) {
         if (waittime == 0) {
             return;
@@ -486,6 +516,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
         }
     }
 
+    // A method that allows the robot to strafe based on direction, encoder counts, motor power, and an angle to hold
     void strafe(final char lr, final int encoderCounts, final double motorPower, final double holdAngle) {
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
