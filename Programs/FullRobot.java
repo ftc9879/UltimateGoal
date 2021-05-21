@@ -442,6 +442,7 @@ public class FullRobot extends OpMode {
 
     }
 
+    // A method that shoots three rings
     void shootThreeTimes(final double waitTime) {
         leftFront.setPower(0);
         rightFront.setPower(0);
