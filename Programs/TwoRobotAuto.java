@@ -26,6 +26,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
 public class TwoRobotAuto extends LinearOpMode {
+    
+    
+    // Declares all motors
     DcMotorEx ShooterMotor1;
     DcMotor IntakeMotor;
     DcMotor IntakeMotor2;
@@ -33,6 +36,8 @@ public class TwoRobotAuto extends LinearOpMode {
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
+    
+    // Declares all Servos
     Servo ShooterServo;
     CRServo LeftServo;
     CRServo RightServo;
@@ -42,39 +47,64 @@ public class TwoRobotAuto extends LinearOpMode {
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
+    
+    // Drive Motor Power Variables
     double leftFrontpower;
     double rightFrontpower;
     double leftBackpower;
     double rightBackpower;
+    
+    // Drive Input variables
     double leftsticky;
     double leftstickx;
     double rightstickx;
     double r;
     double robotangle;
     double rightX;
+    
+    // Drive Adjustment Variables
     double divide;
     double straightP;
+    
+    // Determines time of stack detection
     double visionReadTime;
+    
+    // Variables that track the angle of the robot
     double angle;
     String angleVal;
+    
+    // Variables for tracking the state of the shooter motor
     int currentCounts;
     int lastCounts;
+    
+    // Setup modifying PID values
     PIDFCoefficients pid;
+    
+    // Load TensorFlowData
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+    
+    // Prepare a timer
     ElapsedTime timer;
+    
+    // Setup Variables for voting
     double close;
     double middle;
     double far;
     int guess;
+    
+    // Prepare to use the gyro
     Acceleration gravity;
     BNO055IMU imu;
     Orientation angles;
+    
+    // Prepare to use Vuforia and TensorFlow
     private static final String VUFORIA_KEY = " AWFgCSD/////AAABmYkyQ5CPl0oxgJ1ax3vYAbqHDTIleFfJqDw8oca/v28OosWAbIHMkNSwkFuFnM7FPUcXM9sqqdHfFdyMulVLNQyAVUlboelnnXfdw3EkqFCQcF0q6EoJydb2+fJE8fWNLGOrvxZm9rkSX0NT9DVdE6UKfyc/TVpYTYaLegPitiLRpvG4P2cHsHhtUQ48LCuuPN2uFdC1CAJ6YRYtc7UMiTMZw8PyCKM1tlcG6v4dugoERLcoeX2OVA9eFJ2w89/PNK7rzNsLmo4OugTh3bztARq6S7gl+Q/DbscZ3/53Vg+1N4eIXZh/LJwJK6ZJxetftvcXBHi9j9f9T6/ghhY0szUzLmAoKlAO+0XXebOtXKad ";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
+    
+    // Store the constants for this autonomous
     public TwoRobotAuto() {
         straightP = 0.075;
         visionReadTime = 0.1;
@@ -83,16 +113,24 @@ public class TwoRobotAuto extends LinearOpMode {
         timer = new ElapsedTime();
         far = 0.0;
     }
-
+    
+    // Adjustable Variables for alternate paths
     boolean startLeft = false;
     boolean shootStack = true;
     boolean parkFirst = true;
     double startWait = 2;
 
     public void runOpMode() throws InterruptedException {
+        // Map all Motors
         ShooterMotor1 = hardwareMap.get(DcMotorEx.class, "SM1");
         IntakeMotor2 = hardwareMap.get(DcMotor.class, "IM2");
         IntakeMotor = hardwareMap.get(DcMotor.class, "IM1");
+        leftFront = hardwareMap.dcMotor.get("LF");
+        rightFront = hardwareMap.dcMotor.get("RF");
+        leftBack = hardwareMap.dcMotor.get("LB");
+        rightBack = hardwareMap.dcMotor.get("RB");
+        
+        // Map all Servos
         ShooterServo = hardwareMap.get(Servo.class, "s1");
         GripperServo = hardwareMap.get(Servo.class, "GS");
         LeftServo = hardwareMap.get(CRServo.class, "LS");
@@ -101,21 +139,23 @@ public class TwoRobotAuto extends LinearOpMode {
         IntakeServo2 = hardwareMap.get(CRServo.class, "IS2");
         SideServo = hardwareMap.get(Servo.class, "SS");
         SideServo2 = hardwareMap.get(Servo.class, "SS2");
+       
+        // Set the mode and zero power behavior of motors
         ShooterMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ShooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFront = hardwareMap.dcMotor.get("LF");
-        rightFront = hardwareMap.dcMotor.get("RF");
-        leftBack = hardwareMap.dcMotor.get("LB");
-        rightBack = hardwareMap.dcMotor.get("RB");
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        // Setup and apply PIDF to the shooter motor 
         final PIDFCoefficients newPIDF = new PIDFCoefficients(1000.0, 10.0, 0.0, 14.3);
         ShooterMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
         pid = ShooterMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        // Initialize the gyro
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -124,19 +164,30 @@ public class TwoRobotAuto extends LinearOpMode {
         parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
         telemetry.update();
+        
+        // Create the timer
         timer = new ElapsedTime();
+        
+        // Initialize the vision system 
         initializeVision();
+        
+        // Let the drivers know that the robot is ready
         telemetry.addData("ROBOT IS READY", "PRESS START TO BEGIN");
         telemetry.update();
+        
+        // Start when the play button is pressed
         waitForStart();
+        
+        // Detect the amount of rings in the starting stack
         determineNumberOfRings();
         timer.reset();
         timer.startTime();
         if (tfod != null) {
             tfod.shutdown();
         }
+        
+        // Move behind the Stack of rings
         ShooterMotor1.setPower(-0.61);
         SideServo2.setPosition(1.0);
         waiting(startWait);
@@ -146,10 +197,16 @@ public class TwoRobotAuto extends LinearOpMode {
         } else {
             strafe('l', 1200, 0.5, 0);
         }
+        // If the shootStack variable was changed to true it runs this sequence
         if (shootStack == true) {
+            // If the vision detected 2 then it runs this sequence
             if (guess == 2) {
+                
+                // Shoots the three rings that were preloaded in robot into the high goal
                 moveStraight('f', 200, 0.0, 0.2);
                 shootThreeTimes(0.5);
+                
+                // Intakes and shoots the first two rings of the stack
                 IntakeServo.setPower(1.0);
                 IntakeServo2.setPower(-1.0);
                 IntakeMotor.setPower(-1.0);
@@ -157,22 +214,27 @@ public class TwoRobotAuto extends LinearOpMode {
                 moveStraight('f', 200, 0.0, 0.2);
                 waiting(1.5);
                 shootThreeTimes(0.25);
+                
+                // Intakes and shoots the last two rings of the stack after driving up to the launch line
                 moveStraight('f', 1300, 0.0, 0.4);
                 waiting(1);
                 shootThreeTimes(0.25);
             }
+            // If the vision detected 1 then it runs this sequence
             if (guess == 1) {
+                // Shoots one of the Preloaded rings
                 moveStraight('f', 200, 0.0, 0.2);
                 timer.reset();
                 timer.startTime();
                 ShooterServo.setPosition(1.0);
-                while (timer.time() < 0.5) {
+                while (timer.time() < 0.5 && opModeIsActive()) {
                 }
                 ShooterServo.setPosition(0.5);
                 timer.reset();
                 timer.startTime();
-                while (timer.time() < 0.25) {
+                while (timer.time() < 0.25 && opModeIsActive()) {
                 }
+                // Intakes and shoots the one ring aswell as the other two preloaded rings
                 ShooterServo.setPosition(1.0);
                 IntakeServo.setPower(1.0);
                 IntakeServo2.setPower(-1.0);
@@ -182,7 +244,10 @@ public class TwoRobotAuto extends LinearOpMode {
                 waiting(1.0);
                 shootThreeTimes(0.25);
             }
+            
+            // If the vision detected 2 then it runs this sequence
             if (guess == 0) {
+                // Drives to the launch line and shoots
                 moveStraight('f', 200, 0.0, 0.2);
                 IntakeServo.setPower(1.0);
                 IntakeServo2.setPower(-1.0);
@@ -196,7 +261,9 @@ public class TwoRobotAuto extends LinearOpMode {
             IntakeServo2.setPower(0);
             IntakeMotor.setPower(0);
             IntakeMotor2.setPower(0);
+        // If shootStack is false it runs this sequence
         } else {
+            // Drives to the launch line and shoots
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
@@ -209,8 +276,9 @@ public class TwoRobotAuto extends LinearOpMode {
             IntakeMotor.setPower(0);
             IntakeMotor2.setPower(0);
         }
-
+        // If the vision detected 2 then it runs this sequence
         if (guess == 2) {
+            // Drives next to the Far drop zone and drops the wobble goal
             moveStraight('f', 2750, 0.0, 0.9);
             waiting(0.25);
             strafe('r', 750, 0.5, 0.0);
@@ -218,7 +286,9 @@ public class TwoRobotAuto extends LinearOpMode {
             SideServo2.setPosition(0.0);
             waiting(.5);
         }
+        // If the vision detected 1 then it runs this sequence
         if (guess == 1) {
+            // Drives to the middle drop zone and drops the wobble goal
             pointTurn('l', 85, .4);
             strafe('r', 1400, .5, 90);
             strafe('l', 200, 0.5, 90);
@@ -226,7 +296,9 @@ public class TwoRobotAuto extends LinearOpMode {
             strafe('l', 600, 0.5, 90);
             pointTurn('r', 5, 0.4);
         }
+        // If the vision detected 0 then it runs this sequence
         if (guess == 0) {
+            // Drives
             moveStraight('f', 350, 0.0, 0.75);
             strafe('r', 750, 0.5, 0.0);
             strafe('l', 200, 0.5, 0.0);
@@ -282,10 +354,10 @@ public class TwoRobotAuto extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         if (fb == 'f') {
-            while (leftBack.getCurrentPosition() < encoderCount) {
+            while (leftBack.getCurrentPosition() < encoderCount && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 final String angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 double angle = Float.parseFloat(angleVal);
@@ -299,7 +371,7 @@ public class TwoRobotAuto extends LinearOpMode {
                 rightBack.setPower(-motorPower + (angle - holdAngle) * straightP);
             }
         } else {
-            while (leftBack.getCurrentPosition() > encoderCount) {
+            while (leftBack.getCurrentPosition() > encoderCount && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -321,7 +393,7 @@ public class TwoRobotAuto extends LinearOpMode {
 
     void pointTurn(final char lr, final double targetAngle, final double motorPower) {
         if (lr == 'l') {
-            while (angle < targetAngle) {
+            while (angle < targetAngle && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -335,7 +407,7 @@ public class TwoRobotAuto extends LinearOpMode {
                 rightFront.setPower(-motorPower);
             }
         } else {
-            while (angle > targetAngle) {
+            while (angle > targetAngle && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -387,32 +459,32 @@ public class TwoRobotAuto extends LinearOpMode {
         timer.reset();
         timer.startTime();
         ShooterServo.setPosition(1.0);
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
         timer.reset();
         timer.startTime();
-        while (timer.time() < waitTime) {
+        while (timer.time() < waitTime && opModeIsActive()) {
         }
         ShooterServo.setPosition(0.5);
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         ShooterServo.setPosition(1.0);
     }
@@ -420,7 +492,7 @@ public class TwoRobotAuto extends LinearOpMode {
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
-        while (timer.time() < 1.75) {
+        while (timer.time() < 1.75 && opModeIsActive()) {
             RightServo.setPower(1.0);
             LeftServo.setPower(1.0);
         }
@@ -435,11 +507,11 @@ public class TwoRobotAuto extends LinearOpMode {
         GripperServo.setPosition(1.0);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 1.0) {
+        while (timer.time() < 1.0 && opModeIsActive()) {
         }
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.6) {
+        while (timer.time() < 0.6 && opModeIsActive()) {
             RightServo.setPower(-1.0);
             LeftServo.setPower(-1.0);
         }
@@ -450,7 +522,7 @@ public class TwoRobotAuto extends LinearOpMode {
     void waiting(final double waittime) {
         timer.startTime();
         timer.reset();
-        while (timer.time() < waittime) {
+        while (timer.time() < waittime && opModeIsActive()) {
         }
     }
 
@@ -459,14 +531,14 @@ public class TwoRobotAuto extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         timer.startTime();
         timer.reset();
-        while (timer.time() < 0.25) {
+        while (timer.time() < 0.25 && opModeIsActive()) {
         }
         if (lr == 'l') {
             leftFront.setPower(-motorPower);
             leftBack.setPower(motorPower);
             rightFront.setPower(-motorPower);
             rightBack.setPower(motorPower);
-            while (leftBack.getCurrentPosition() < encoderCounts) {
+            while (leftBack.getCurrentPosition() < encoderCounts && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -481,7 +553,7 @@ public class TwoRobotAuto extends LinearOpMode {
             leftBack.setPower(-motorPower);
             rightFront.setPower(motorPower);
             rightBack.setPower(-motorPower);
-            while (leftBack.getCurrentPosition() > -encoderCounts) {
+            while (leftBack.getCurrentPosition() > -encoderCounts && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);

@@ -321,7 +321,7 @@ public class PowerShotAuto extends LinearOpMode {
         while (timer.time() < 0.25) {
         }
         if (fb == 'f') {
-            while (leftBack.getCurrentPosition() < encoderCount) {
+            while (leftBack.getCurrentPosition() < encoderCount && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 final String angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 double angle = Float.parseFloat(angleVal);
@@ -335,7 +335,7 @@ public class PowerShotAuto extends LinearOpMode {
                 rightBack.setPower(-motorPower + (angle - holdAngle) * straightP);
             }
         } else {
-            while (leftBack.getCurrentPosition() > encoderCount) {
+            while (leftBack.getCurrentPosition() > encoderCount && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -358,7 +358,7 @@ public class PowerShotAuto extends LinearOpMode {
     // A method for point turning based on direction, the angle to turn to, and motor power
     void pointTurn(final char lr, final double targetAngle, final double motorPower) {
         if (lr == 'l') {
-            while (angle < targetAngle) {
+            while (angle < targetAngle && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -372,7 +372,7 @@ public class PowerShotAuto extends LinearOpMode {
                 rightFront.setPower(-motorPower);
             }
         } else {
-            while (angle > targetAngle) {
+            while (angle > targetAngle && opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
@@ -508,7 +508,7 @@ public class PowerShotAuto extends LinearOpMode {
     void waiting(final double waittime) {
         timer.startTime();
         timer.reset();
-        while (timer.time() < waittime) {
+        while (timer.time() < waittime && opModeIsActive()) {
         }
     }
 
