@@ -182,36 +182,36 @@ public class PowerShotAutoBlue extends LinearOpMode {
             tfod.shutdown();
         }
         // Move to and shoot the power shots
-        ShooterMotor1.setPower(-0.52);
+        ShooterMotor1.setPower(-0.525);
         SideServo.setPosition(0.0);
         moveStraight('f', 2800, 0.0, 0.8);
         shootOneTime(0.5);
-        strafe('r', 200, .5, 0);
+        strafe('r', 390, .5, 0);
         shootOneTime(0.5);
-        strafe('r', 200, .5, 0);
+        strafe('r', 390, .5, 0);
         shootOneTime(0.5);
 
         
         if (shootStack == true & guess > 0) {
             // If we are shooting the stack, move to it
-            strafe('l', 750, 0.5, 0);
+            strafe('l', 900, 0.5, 0);
             moveStraight('b', -1550, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
-                waiting(5); // normal: 0 8373: 0 92: 5 17040: 5
+                waiting(0); // normal: 0 8373: 0 92: 5 17040: 5
                 strafe('l', 650, 0.5, 0);
             } else {
-                strafe('l', 500, 0.5, 0);
+                strafe('l', 650, 0.5, 0);
             }
 
             ShooterMotor1.setPower(-0.61);
             if (guess == 2) {
                 // Shoot the stack
                 moveStraight('f', 400, 0.0, 0.3);
-                waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
+                waiting(1); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
                 shootThreeTimes(0.25);
                 moveStraight('f', 1300, 0.0, 0.4);
                 waiting(1);
@@ -219,7 +219,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             }
             if (guess == 1) {
                 // Shoot the stack
-                waiting(2.5); // normal: 0 8373: 5 92: 0 17040: 2.5
+                waiting(1); // normal: 0 8373: 5 92: 0 17040: 2.5
                 moveStraight('f', 400, 0.0, 0.3);
                 waiting(1.5);
                 moveStraight('f', 1300, 0.0, 0.4);
@@ -231,7 +231,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             // Move to the stack
             strafe('l', 250, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
-            waiting(9.5); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
+            waiting(1); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5 4155: 0.5
             strafe('l', 1250, 0.5, 0);
             ShooterMotor1.setPower(-0.61);
             IntakeServo.setPower(1.0);
@@ -281,7 +281,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             SideServo.setPosition(1.0);
 
             // Park on the line
-            strafe('r', 550, 0.5, 0.0);
+            strafe('r', 550, 0.5, 0.0); // normal: 550 4155: 1800
         }
 
     }
@@ -548,10 +548,10 @@ public class PowerShotAutoBlue extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(motorPower + (angle - holdAngle) * 0.04);
+                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.04);
+                rightFront.setPower(motorPower + (angle - holdAngle) * 0.04);
+                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.04);
             }
         }
         leftFront.setPower(0.0);
