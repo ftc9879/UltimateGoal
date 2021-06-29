@@ -229,8 +229,7 @@ public class OutsideAuto extends LinearOpMode {
          // If the vision detected 2 then it runs this sequence
             if (guess == 2) {
                 
-                // strafes to the middle of the field and backs onto the launch line
-                strafe('l', 1800, 0.75, 0);
+                // backs onto the launch line
                 moveStraight('b', -2250, 0.0, 0.9);
             }
             
