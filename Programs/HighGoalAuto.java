@@ -184,24 +184,24 @@ public class HighGoalAuto extends LinearOpMode {
         }
 
         // Move to and shoot rings in high goal
-        ShooterMotor1.setPower(-0.52);
-        SideServo2.setPosition(1.0);
+        ShooterMotor1.setPower(-0.61);
+        SideServo.setPosition(0.0);
         moveStraight('f', 2800, -2, 0.8);
-        strafe('r',850,.5,0);
+        strafe('r',750,.5,0);
         shootThreeTimes(.25);
         waiting(.5);
 
-        if (shootStack == true & guess > 0) {
+        if (guess > 0) {
             // Return to the stack
-            strafe('l',850,.5,0)
+            strafe('l',850,.5,0);
             moveStraight('b', -1650, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
-                waiting(5); // normal: 0 8373: 0 92: 5
-                strafe('r', 650, 0.5, 0);
+                waiting(1); // normal: 0 8373: 0 92: 5
+                strafe('r', 700, 0.5, 0);
             } else {
                 strafe('r', 900, 0.5, 0);
             }
@@ -228,7 +228,7 @@ public class HighGoalAuto extends LinearOpMode {
             strafe('l', 1050, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
             waiting(7); // normal: 9.5 8373: 9.5 92: 7
-            strafe('r', 1250, 0.5, 0);
+            strafe('r', 1050, 0.5, 0);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
