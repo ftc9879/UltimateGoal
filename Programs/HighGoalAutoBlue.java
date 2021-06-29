@@ -182,7 +182,7 @@ public class HighGoalAutoBlue extends LinearOpMode {
             tfod.shutdown();
         }
         // Move to and shoot into the high goal
-        ShooterMotor1.setPower(-0.52);
+        ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
         moveStraight('f', 2800, 0.0, 0.8);
         strafe('l',750,0.5,0);
@@ -203,8 +203,6 @@ public class HighGoalAutoBlue extends LinearOpMode {
             } else {
                 strafe('l', 500, 0.5, 0);
             }
-
-            ShooterMotor1.setPower(-0.61);
             if (guess == 2) {
                 // Shoot the stack
                 moveStraight('f', 400, 0.0, 0.3);
@@ -230,7 +228,6 @@ public class HighGoalAutoBlue extends LinearOpMode {
             moveStraight('b', -1000, 0, 0.5);
             waiting(9.5); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
             strafe('l', 1250, 0.5, 0);
-            ShooterMotor1.setPower(-0.61);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
