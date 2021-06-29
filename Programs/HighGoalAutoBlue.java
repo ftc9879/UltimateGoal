@@ -185,23 +185,23 @@ public class HighGoalAutoBlue extends LinearOpMode {
         ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
         moveStraight('f', 2800, 0.0, 0.8);
-        strafe('l',750,0.5,0);
+        strafe('l',1100,0.5,0);
         shootThreeTimes(.25);
 
         
-        if (shootStack == true & guess > 0) {
+        if (guess > 0) {
             // If we are shooting the stack, move to it
-            strafe('r',750,0.5,0);
-            moveStraight('b', -1550, 0.0, 0.8);
+            strafe('r',950,0.5,0);
+            moveStraight('b', -1700, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
-                waiting(5); // normal: 0 8373: 0 92: 5 17040: 5
-                strafe('l', 650, 0.5, 0);
+                waiting(.25); // normal: 0 8373: 0 92: 5 17040: 5
+                strafe('l', 1100, 0.5, 0);
             } else {
-                strafe('l', 500, 0.5, 0);
+                strafe('l', 1100, 0.5, 0);
             }
             if (guess == 2) {
                 // Shoot the stack
@@ -251,7 +251,7 @@ public class HighGoalAutoBlue extends LinearOpMode {
         if (guess == 1) {
             pointTurn('r', -85, .4);
             // Drop the wobble goal
-            strafe('l', 1300, .5, -90);
+            strafe('l', 1450, .5, -90);
             strafe('r', 200, 0.5, -90);
             SideServo.setPosition(1.0);
 
