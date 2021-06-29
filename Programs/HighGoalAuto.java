@@ -225,7 +225,7 @@ public class HighGoalAuto extends LinearOpMode {
 
         } else {
             // Return to the stack
-            strafe('r', 250, 0.5, 0);
+            strafe('l', 1050, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
             waiting(7); // normal: 9.5 8373: 9.5 92: 7
             strafe('r', 1250, 0.5, 0);
