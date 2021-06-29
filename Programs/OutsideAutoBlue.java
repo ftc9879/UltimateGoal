@@ -189,75 +189,65 @@ public class OutsideAutoBlue extends LinearOpMode {
         
         // Drives to the launch line and shoots
         ShooterMotor1.setPower(-0.61);
-        SideServo2.setPosition(1.0);
+        SideServo.setPosition(0.0);
+      //  strafe('l',175,0.5,0);
         moveStraight('f', 2700, 0.0, 0.6);
         waiting(1.0);
-        pointTurn('r',-15,.4);
+        pointTurn('r',-10,.4);
         shootThreeTimes(0.25);
-        pointTurn('l',0,.4);
-        }
         // If the vision detected 2 then it runs this sequence
         if (guess == 2) {
             // Drives next to the Far drop zone and drops the wobble goal
-            moveStraight('f', 2750, 0.0, 0.9);
-            waiting(0.25);
-            strafe('r', 750, 0.5, 0.0);
-            strafe('l', 200, 0.5, 0.0);
-            strafe('r', 200, 0.5, 0.0);
-            SideServo2.setPosition(0.0);
-            waiting(.5);
+            pointTurn('l',-5,.4);
+            moveStraight('f', 2900,0,0.9);
+            SideServo.setPosition(1.0);
         }
         // If the vision detected 1 then it runs this sequence
         if (guess == 1) {
             // Drives to the middle drop zone and drops the wobble goal
-            moveStraight('f', 1500,.5,0);
-            pointTurn('r', 180, .4);
-            strafe('l',2000,.5, 90);
-            strafe('r', 200, .5, 90);
-            SideServo2.setPosition(0.0);
-            pointTurn('l', 0, 0.4);
+            pointTurn('l',-5,.4);
+            moveStraight('f', 2100,0,0.5);
+            strafe('r', 1750, .5, 0);
+            SideServo.setPosition(1.0);
         }
         // If the vision detected 0 then it runs this sequence
         if (guess == 0) {
             // Drives to close drop zone and drops wobble goal
-            moveStraight('f', 350, 0.0, 0.75);
-            strafe('r', 750, 0.5, 0.0);
-            strafe('l, 200, 0.5, 0.0);
-            strafe('r', 200, 0.5, 0.0);
-            SideServo2.setPosition(0.0);
+            pointTurn('l',85,.4);
+            moveStraight('f',100,90,0.6);
+            strafe('r', 1500, 0.5, 90.0);
+            SideServo.setPosition(1.0);
         }
          // If the vision detected 2 then it runs this sequence
             if (guess == 2) {
                 
                 //  backs onto the launch line
-                moveStraight('b', -2250, 0.0, 0.9);
+               strafe('r',2300,.8,0);
+                waiting(1);
+                moveStraight('b', -2300, 0.0, 0.9);
             }
             
             // If the vision detected 1 then it runs this sequence
             if (guess == 1) {
                 
                 // Strafes along the launch line to the middle of the field
-                strafe('l', 2000, 0.75, 0);
-                moveStraight('b',1500,.9,0);
+                strafe('r', 600, 0.75, 0);
+                waiting(1);
+                moveStraight('b',-1000,0,0.9);
             }
             // If the vision detected 0 then it runs this sequence
             if (guess == 0) {
                 
                 // Strafes along the launch line to the middle of the field
-                strafe('r', 1800, .75, 0);
+                strafe('r', 1000, .75, 90);
+                moveStraight('b',-2000,90,0.9);
+                waiting(.25);
+                pointTurn('r',5,0.4);
+                waiting(1);
+                moveStraight('b',-1500,0,0.9);
             }
-            
-        //Runs this sequence if parkfirst was made false
-        } else {
-            
-            // If the vision detected 2 then it runs this sequence
-            if (guess == 2) {
-                
-                // Backs up to the launch line
-                moveStraight('b', -1750, 0.0, 0.9);
-            }
-
-        }
+         
+        
     }
     // A method for initializing Vuforia
     private void initVuforia() {
