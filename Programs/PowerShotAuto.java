@@ -184,42 +184,42 @@ public class PowerShotAuto extends LinearOpMode {
         }
 
         // Move to and shoot the power shots
-        ShooterMotor1.setPower(-0.52);
+        ShooterMotor1.setPower(-0.53);
         SideServo2.setPosition(1.0);
-        moveStraight('f', 2800, -2, 0.8);
+        moveStraight('f', 2900, 0, 0.55);
         shootOneTime(0.5);
-        strafe('l', 350, .5, 0);
+        strafe('l', 425, .5, 0);
         shootOneTime(0.5);
-        strafe('l', 350, .5, 0);
+        strafe('l', 425, .5, 0);
         shootOneTime(0.5);
 
         if (shootStack == true & guess > 0) {
             // Return to the stack
             strafe('r', 750, 0.5, 0);
-            moveStraight('b', -1650, 0.0, 0.8);
+            moveStraight('b', -1750, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
-                waiting(5); // normal: 0 8373: 0 92: 5
-                strafe('r', 650, 0.5, 0);
+                waiting(0); // normal: 0 8373: 0 92: 5
+                strafe('r', 950, 0.5, 0);
             } else {
-                strafe('r', 900, 0.5, 0);
+                strafe('r', 950, 0.5, 0);
             }
 
             // Shoot the stack
             ShooterMotor1.setPower(-0.61);
             if (guess == 2) {
                 moveStraight('f', 400, 0.0, 0.2);
-                waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5
+                waiting(1.5); // normal: 1.5 8373: 3.5 92: 3.5
                 shootThreeTimes(0.25);
                 moveStraight('f', 1300, 0.0, 0.4);
                 waiting(1);
                 shootThreeTimes(0.25);
             }
             if (guess == 1) {
-                waiting(0); // normal: 0 8373: 5 92: 0
+                waiting(1); // normal: 0 8373: 5 92: 0
                 moveStraight('f', 400, 0.0, 0.2);
                 waiting(1.5);
                 moveStraight('f', 1300, 0.0, 0.4);
@@ -228,9 +228,9 @@ public class PowerShotAuto extends LinearOpMode {
 
         } else {
             // Return to the stack
-            strafe('r', 250, 0.5, 0);
-            moveStraight('b', -1000, 0, 0.5);
-            waiting(7); // normal: 9.5 8373: 9.5 92: 7
+            strafe('r', 450, 0.5, 0);
+            moveStraight('b', -1100, 0, 0.5);
+            waiting(1); // normal: 9.5 8373: 9.5 92: 7 7842: 9.5
             strafe('r', 1250, 0.5, 0);
             ShooterMotor1.setPower(-0.61);
             IntakeServo.setPower(1.0);
@@ -249,6 +249,7 @@ public class PowerShotAuto extends LinearOpMode {
             strafe('l', 600, 0.8, 0);
             moveStraight('b', -2675, -2.0, 0.95);
             shootThreeTimes(0.25);
+
 
             // Park on the line
             moveStraight('f', 300, 0.0, 0.95);
@@ -280,7 +281,7 @@ public class PowerShotAuto extends LinearOpMode {
             SideServo2.setPosition(0.0);
 
             // Park on the line
-            strafe('l', 500, 0.5, 0.0);
+            strafe('l', 500, 0.5, 0.0); // Normal: 500 
         }
 
     }
@@ -529,10 +530,10 @@ public class PowerShotAuto extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(motorPower + (angle - holdAngle) * 0.075);
             }
         }
         if (lr == 'r') {
@@ -544,10 +545,10 @@ public class PowerShotAuto extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
             }
         }
         leftFront.setPower(0.0);

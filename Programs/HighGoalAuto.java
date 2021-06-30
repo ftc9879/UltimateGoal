@@ -186,7 +186,7 @@ public class HighGoalAuto extends LinearOpMode {
         // Move to and shoot rings in high goal
         ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
-        moveStraight('f', 2800, -2, 0.8);
+        moveStraight('f', 2900, 0, 0.55);
         strafe('r',750,.5,0);
         shootThreeTimes(.25);
         waiting(.5);
@@ -201,15 +201,16 @@ public class HighGoalAuto extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
                 waiting(1); // normal: 0 8373: 0 92: 5
-                strafe('r', 700, 0.5, 0);
+                strafe('r', 900, 0.5, 0);
             } else {
+                waiting(1); // normal: 0 8373: 0 92: 5
                 strafe('r', 900, 0.5, 0);
             }
 
             // Shoot the stack
             if (guess == 2) {
                 moveStraight('f', 400, 0.0, 0.2);
-                waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5
+                waiting(1.5); // normal: 1.5 8373: 3.5 92: 3.5
                 shootThreeTimes(0.25);
                 moveStraight('f', 1300, 0.0, 0.4);
                 waiting(1);
@@ -227,7 +228,7 @@ public class HighGoalAuto extends LinearOpMode {
             // Return to the stack
             strafe('l', 1050, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
-            waiting(7); // normal: 9.5 8373: 9.5 92: 7
+            waiting(1); // normal: 9.5 8373: 9.5 92: 7
             strafe('r', 1050, 0.5, 0);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
@@ -525,10 +526,10 @@ public class HighGoalAuto extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(motorPower + (angle - holdAngle) * 0.075);
             }
         }
         if (lr == 'r') {
@@ -540,10 +541,10 @@ public class HighGoalAuto extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
             }
         }
         leftFront.setPower(0.0);

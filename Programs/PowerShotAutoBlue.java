@@ -182,20 +182,20 @@ public class PowerShotAutoBlue extends LinearOpMode {
             tfod.shutdown();
         }
         // Move to and shoot the power shots
-        ShooterMotor1.setPower(-0.525);
+        ShooterMotor1.setPower(-0.53);
         SideServo.setPosition(0.0);
-        moveStraight('f', 2800, 0.0, 0.8);
+        moveStraight('f', 3000, 0.0, 0.55);
         shootOneTime(0.5);
-        strafe('r', 390, .5, 0);
+        strafe('r', 340, .5, 0);
         shootOneTime(0.5);
-        strafe('r', 390, .5, 0);
+        strafe('r', 340, .5, 0);
         shootOneTime(0.5);
 
         
         if (shootStack == true & guess > 0) {
             // If we are shooting the stack, move to it
-            strafe('l', 900, 0.5, 0);
-            moveStraight('b', -1550, 0.0, 0.8);
+            strafe('l', 800, 0.5, 0);
+            moveStraight('b', -1650, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
@@ -211,7 +211,7 @@ public class PowerShotAutoBlue extends LinearOpMode {
             if (guess == 2) {
                 // Shoot the stack
                 moveStraight('f', 400, 0.0, 0.3);
-                waiting(1); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
+                waiting(1.5); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
                 shootThreeTimes(0.25);
                 moveStraight('f', 1300, 0.0, 0.4);
                 waiting(1);
@@ -229,8 +229,8 @@ public class PowerShotAutoBlue extends LinearOpMode {
 
         } else {
             // Move to the stack
-            strafe('l', 250, 0.5, 0);
-            moveStraight('b', -1000, 0, 0.5);
+            strafe('l', 350, 0.5, 0);
+            moveStraight('b', -1100, 0, 0.5);
             waiting(1); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5 4155: 0.5
             strafe('l', 1250, 0.5, 0);
             ShooterMotor1.setPower(-0.61);
@@ -350,10 +350,11 @@ public class PowerShotAutoBlue extends LinearOpMode {
                 rightBack.setPower(motorPower + (angle - holdAngle) * straightP);
             }
         }
-        leftBack.setPower(0.0);
-        leftFront.setPower(0.0);
-        rightBack.setPower(0.0);
-        rightFront.setPower(0.0);
+        leftBack.setPower(0);
+        leftFront.setPower(0);
+        rightBack.setPower(0);
+        rightFront.setPower(0);
+        
     }
 
     // A method for point turning based on direction, the angle to turn to, and motor power
@@ -533,10 +534,10 @@ public class PowerShotAutoBlue extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(motorPower + (angle - holdAngle) * 0.075);
             }
         }
         if (lr == 'r') {
@@ -548,10 +549,10 @@ public class PowerShotAutoBlue extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(motorPower + (angle - holdAngle) * 0.04);
-                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.04);
-                rightFront.setPower(motorPower + (angle - holdAngle) * 0.04);
-                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.04);
+                leftFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
             }
         }
         leftFront.setPower(0.0);

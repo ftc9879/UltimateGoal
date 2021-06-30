@@ -479,10 +479,10 @@ public class OutsideAuto extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(motorPower + (angle - holdAngle) * 0.075);
             }
         }
         if (lr == 'r') {
@@ -494,10 +494,10 @@ public class OutsideAuto extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
+                leftFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
             }
         }
         leftFront.setPower(0.0);

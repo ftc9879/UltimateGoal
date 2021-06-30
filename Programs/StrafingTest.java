@@ -172,7 +172,7 @@ public class StrafeTest extends LinearOpMode {
         // Start when the play button is pressed
         waitForStart();
         waiting(1);
-         strafe('r',390,0.4,0);
+         strafe('r',390,0.4,0); // old tiles = 390 new tiles = 430
          // strafe('l',425,0.4,0);
         waiting(1);
         strafe('r',390,0.4,0);
@@ -406,10 +406,10 @@ public class StrafeTest extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.04);
-                leftBack.setPower(motorPower + (angle - holdAngle) * 0.04);
-                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.04);
-                rightBack.setPower(motorPower + (angle - holdAngle) * 0.04);
+                leftFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(motorPower + (angle - holdAngle) * 0.075);
             }
         }
         if (lr == 'r') {
@@ -421,10 +421,15 @@ public class StrafeTest extends LinearOpMode {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 angleVal = formatAngle(angles.angleUnit, angles.firstAngle);
                 angle = Float.parseFloat(angleVal);
-                leftFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
-                rightFront.setPower(motorPower + (angle - holdAngle) * 0.004);
-                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.004);
+                telemetry.addData("LF:", leftFront.getCurrentPosition());
+                telemetry.addData("RF:", rightFront.getCurrentPosition());
+                telemetry.addData("LB:", leftBack.getCurrentPosition());
+                telemetry.addData("RB:", rightBack.getCurrentPosition());
+                telemetry.update();
+                leftFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                leftBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
+                rightFront.setPower(motorPower + (angle - holdAngle) * 0.075);
+                rightBack.setPower(-motorPower + (angle - holdAngle) * 0.075);
             }
         }
         leftFront.setPower(0.0);

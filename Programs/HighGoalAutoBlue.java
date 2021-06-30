@@ -184,7 +184,7 @@ public class HighGoalAutoBlue extends LinearOpMode {
         // Move to and shoot into the high goal
         ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
-        moveStraight('f', 2800, 0.0, 0.8);
+        moveStraight('f', 2900, 0.0, 0.55);
         strafe('l',1100,0.5,0);
         shootThreeTimes(.25);
 
@@ -199,25 +199,25 @@ public class HighGoalAutoBlue extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
                 waiting(.25); // normal: 0 8373: 0 92: 5 17040: 5
-                strafe('l', 1100, 0.5, 0);
+                strafe('l', 900, 0.5, 0);
             } else {
-                strafe('l', 1100, 0.5, 0);
+                strafe('l', 900, 0.5, 0);
             }
             if (guess == 2) {
                 // Shoot the stack
-                moveStraight('f', 400, 0.0, 0.3);
+                moveStraight('f', 500, 0.0, 0.3);
                 waiting(3.5); // normal: 1.5 8373: 3.5 92: 3.5 17040: 3.5
                 shootThreeTimes(0.25);
-                moveStraight('f', 1300, 0.0, 0.4);
+                moveStraight('f', 1200, 0.0, 0.4);
                 waiting(1);
                 shootThreeTimes(0.25);
             }
             if (guess == 1) {
                 // Shoot the stack
                 waiting(2.5); // normal: 0 8373: 5 92: 0 17040: 2.5
-                moveStraight('f', 400, 0.0, 0.3);
+                moveStraight('f', 500, 0.0, 0.3);
                 waiting(1.5);
-                moveStraight('f', 1300, 0.0, 0.4);
+                moveStraight('f', 1200, 0.0, 0.4);
                 shootThreeTimes(.25);
 
             }
@@ -226,8 +226,8 @@ public class HighGoalAutoBlue extends LinearOpMode {
             // Move to the stack
             strafe('r', 950, 0.5, 0);
             moveStraight('b', -1000, 0, 0.5);
-            waiting(9.5); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
-            strafe('l', 1250, 0.5, 0);
+            waiting(1); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
+            strafe('l', 1000, 0.5, 0);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
