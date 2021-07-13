@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.Iterator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.List;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -22,7 +23,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
+@Disabled
 @Autonomous
 
 public class PowerShotAuto extends LinearOpMode {
@@ -350,10 +351,11 @@ public class PowerShotAuto extends LinearOpMode {
                 rightBack.setPower(motorPower + (angle - holdAngle) * straightP);
             }
         }
-        leftBack.setPower(0.0);
-        leftFront.setPower(0.0);
-        rightBack.setPower(0.0);
-        rightFront.setPower(0.0);
+        leftBack.setPower(0);
+        leftFront.setPower(0);
+        rightBack.setPower(0);
+        rightFront.setPower(0);
+        
     }
 
     // A method for point turning based on direction, the angle to turn to, and motor power
@@ -403,7 +405,7 @@ public class PowerShotAuto extends LinearOpMode {
     void determineNumberOfRings() {
         timer.reset();
         timer.startTime();
-        while (timer.time() < 0.1 && opModeIsActive()) {
+        while (timer.time() < .1 && opModeIsActive()) {
             final List<Recognition> updatedRecognitions = (List<Recognition>) tfod.getRecognitions();
             close = 0.5;
             for (final Recognition recognition : updatedRecognitions) {
@@ -438,7 +440,7 @@ public class PowerShotAuto extends LinearOpMode {
         ShooterServo.setPosition(1.0);
     }
 
-    // A method that shoots three rings
+    // A method that prepares the robot to pick up a wobble goal
     void shootThreeTimes(final double waitTime) {
         timer.reset();
         timer.startTime();
@@ -473,7 +475,7 @@ public class PowerShotAuto extends LinearOpMode {
         ShooterServo.setPosition(1.0);
     }
 
-    // A method that prepares the robot to pick up a wobble goal
+    // A method that picks up a wobble goal
     void wobblePickUpPrep() {
         timer.reset();
         timer.startTime();
@@ -507,6 +509,9 @@ public class PowerShotAuto extends LinearOpMode {
 
     // A method that implements a pause
     void waiting(final double waittime) {
+        if (waittime == 0) {
+            return;
+        }
         timer.startTime();
         timer.reset();
         while (timer.time() < waittime && opModeIsActive()) {

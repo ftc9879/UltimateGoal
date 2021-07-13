@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.Iterator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -23,8 +24,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-@Disabled
+
 @Autonomous
+@Disabled
 public class TwoRobotAuto extends LinearOpMode {
     
     

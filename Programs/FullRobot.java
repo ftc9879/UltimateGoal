@@ -319,7 +319,7 @@ public class FullRobot extends OpMode {
                 isPressed55 = true;
                 if (shooterlow == false) {
                     shooterlow = true;
-                    ShooterMotor1.setPower(-.52);
+                    ShooterMotor1.setPower(-.53);
                 } else {
                     ShooterMotor1.setPower(0);
                     shooterlow = false;
@@ -436,9 +436,6 @@ public class FullRobot extends OpMode {
             SideServo2.setPosition(0);
         }
 
-        if (gamepad2.dpad_up) {
-            shootThreeTimes(0.15);
-        }
 
     }
 

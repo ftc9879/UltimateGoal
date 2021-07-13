@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.Iterator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -23,8 +24,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 @Autonomous
+@Disabled
 public class OutsideAuto extends LinearOpMode {
     
     
@@ -208,8 +209,8 @@ public class OutsideAuto extends LinearOpMode {
         if (guess == 1) {
             // Drives to the middle drop zone and drops the wobble goal
             pointTurn('r',5,.4);
-            moveStraight('f', 1900,0,0.5);
-            strafe('l', 1750, .5, 0);
+            moveStraight('f', 1700,0,0.5);
+            strafe('l', 1950, .5, 0);
             SideServo2.setPosition(0.0);
         }
         // If the vision detected 0 then it runs this sequence
@@ -227,6 +228,7 @@ public class OutsideAuto extends LinearOpMode {
                 strafe('l',2500,.8,0);
                 waiting(1);
                 moveStraight('b', -2300, 0.0, 0.9);
+                waiting(1);
             }
             
             // If the vision detected 1 then it runs this sequence
@@ -236,6 +238,7 @@ public class OutsideAuto extends LinearOpMode {
                 strafe('l', 800, 0.75, 0);
                 waiting(1);
                 moveStraight('b',-1000,0,0.9);
+                waiting(1);
             }
             // If the vision detected 0 then it runs this sequence
             if (guess == 0) {
@@ -246,7 +249,8 @@ public class OutsideAuto extends LinearOpMode {
                 waiting(.25);
                 pointTurn('l',-5,0.4);
                 waiting(1);
-                moveStraight('b',-1400,0,0.9);
+                moveStraight('b',-1000,0,0.9);
+                waiting(1);
             }
             
         //Runs this sequence if parkfirst was made false

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.Iterator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.List;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
-
+@Disabled
 public class HighGoalAuto extends LinearOpMode {
 
     // Declare all motors
@@ -186,14 +187,17 @@ public class HighGoalAuto extends LinearOpMode {
         // Move to and shoot rings in high goal
         ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
-        moveStraight('f', 2900, 0, 0.55);
-        strafe('r',750,.5,0);
+        moveStraight('f', 2800, 0.0, 0.55);
+         strafe('r',150,0.5,0);
+        pointTurn('r',-3,0.4);
         shootThreeTimes(.25);
         waiting(.5);
 
         if (guess > 0) {
             // Return to the stack
-            strafe('l',850,.5,0);
+         //   strafe('l',850,.5,0);
+            pointTurn('l',0,0.4);
+            strafe('l',550,0.5,0);
             moveStraight('b', -1650, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
@@ -201,10 +205,10 @@ public class HighGoalAuto extends LinearOpMode {
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
                 waiting(1); // normal: 0 8373: 0 92: 5
-                strafe('r', 900, 0.5, 0);
+                strafe('r', 1100, 0.5, 0);
             } else {
                 waiting(1); // normal: 0 8373: 0 92: 5
-                strafe('r', 900, 0.5, 0);
+                strafe('r', 1100, 0.5, 0);
             }
 
             // Shoot the stack
@@ -226,10 +230,13 @@ public class HighGoalAuto extends LinearOpMode {
 
         } else {
             // Return to the stack
-            strafe('l', 1050, 0.5, 0);
+           // strafe('l', 1050, 0.5, 0);
+            pointTurn('l',0,0.4);
+            strafe('l',550,0.5,0);
             moveStraight('b', -1000, 0, 0.5);
             waiting(1); // normal: 9.5 8373: 9.5 92: 7
-            strafe('r', 1050, 0.5, 0);
+          //  strafe('r', 1100, 0.5, 0);
+            strafe('r', 1100, 0.5, 0);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
@@ -265,7 +272,7 @@ public class HighGoalAuto extends LinearOpMode {
             // Sweep the field for extra rings
             moveStraight('f', 3750, 0.0, 0.9);
             waiting(.5);
-            moveStraight('b', -2700, -2, 0.95);
+            moveStraight('b', -2550, -2, 0.95);
 
             // Shoot "bonus rings"
             shootThreeTimes(0.25);

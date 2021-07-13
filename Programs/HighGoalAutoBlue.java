@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.Iterator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.List;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
-
+@Disabled
 public class HighGoalAutoBlue extends LinearOpMode {
     // Declare all motors
     DcMotorEx ShooterMotor1;
@@ -182,26 +183,37 @@ public class HighGoalAutoBlue extends LinearOpMode {
             tfod.shutdown();
         }
         // Move to and shoot into the high goal
+        if(guess == 0){
+        waiting(0); 
+            
+        }
+        
+        else if (guess == 1){
+        waiting(0);
+        }
         ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
-        moveStraight('f', 2900, 0.0, 0.55);
-        strafe('l',1100,0.5,0);
+        moveStraight('f', 2800, 0.0, 0.55);
+         strafe('l',550,0.5,0);
+        pointTurn('l',3,0.4);
         shootThreeTimes(.25);
 
         
         if (guess > 0) {
             // If we are shooting the stack, move to it
-            strafe('r',950,0.5,0);
-            moveStraight('b', -1700, 0.0, 0.8);
+         //   strafe('r',850,0.5,0);
+            pointTurn('r',0,0.4);
+            strafe('r',550,0.5,0);
+            moveStraight('b', -1600, 0.0, 0.8);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);
             IntakeMotor2.setPower(1.0);
             if (guess == 1) {
                 waiting(.25); // normal: 0 8373: 0 92: 5 17040: 5
-                strafe('l', 900, 0.5, 0);
+                strafe('l', 1100, 0.5, 0);
             } else {
-                strafe('l', 900, 0.5, 0);
+                strafe('l', 1100, 0.5, 0);
             }
             if (guess == 2) {
                 // Shoot the stack
@@ -224,10 +236,12 @@ public class HighGoalAutoBlue extends LinearOpMode {
 
         } else {
             // Move to the stack
-            strafe('r', 950, 0.5, 0);
-            moveStraight('b', -1000, 0, 0.5);
+        //    strafe('r', 950, 0.5, 0);
+            pointTurn('r',0,0.4);
+            strafe('r',550,0.4,0);
+            moveStraight('b', -900, 0, 0.5);
             waiting(1); // normal: 9.5 8373: 9.5 92: 7 17040: 9.5
-            strafe('l', 1000, 0.5, 0);
+            strafe('l', 1100, 0.5, 0);
             IntakeServo.setPower(1.0);
             IntakeServo2.setPower(-1.0);
             IntakeMotor.setPower(-1.0);

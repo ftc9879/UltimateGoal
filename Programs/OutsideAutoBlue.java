@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.Iterator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -25,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
+@Disabled
 public class OutsideAutoBlue extends LinearOpMode {
     
     
@@ -43,7 +45,6 @@ public class OutsideAutoBlue extends LinearOpMode {
     CRServo RightServo;
     CRServo IntakeServo;
     CRServo IntakeServo2;
-    CRServo IntakeServo3;
     Servo GripperServo;
     Servo SideServo;
     Servo SideServo2;
@@ -190,7 +191,6 @@ public class OutsideAutoBlue extends LinearOpMode {
         // Drives to the launch line and shoots
         ShooterMotor1.setPower(-0.61);
         SideServo.setPosition(0.0);
-      //  strafe('l',175,0.5,0);
         moveStraight('f', 2700, 0.0, 0.6);
         waiting(1.0);
         pointTurn('r',-10,.4);
@@ -206,7 +206,7 @@ public class OutsideAutoBlue extends LinearOpMode {
         if (guess == 1) {
             // Drives to the middle drop zone and drops the wobble goal
             pointTurn('l',-5,.4);
-            moveStraight('f', 2100,0,0.5);
+            moveStraight('f', 1900,0,0.5);
             strafe('r', 1750, .5, 0);
             SideServo.setPosition(1.0);
         }
@@ -225,6 +225,7 @@ public class OutsideAutoBlue extends LinearOpMode {
                strafe('r',2300,.8,0);
                 waiting(1);
                 moveStraight('b', -2300, 0.0, 0.9);
+                waiting(1);
             }
             
             // If the vision detected 1 then it runs this sequence
@@ -234,6 +235,7 @@ public class OutsideAutoBlue extends LinearOpMode {
                 strafe('r', 600, 0.75, 0);
                 waiting(1);
                 moveStraight('b',-1000,0,0.9);
+                waiting(1);
             }
             // If the vision detected 0 then it runs this sequence
             if (guess == 0) {
